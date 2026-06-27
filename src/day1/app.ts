@@ -15,7 +15,7 @@ const port = process.env.PORT || 3000;
 
 // app.get() defines a route for a specific URL path.
 // For example, "/" means localhost:3000/
-// If you create "/student", it means localhost:3000/student
+// If you create "/student", it means localhost:3000/studentƯ
 app.get('/', (req, res) => { //req is request and res is respond
     res.send('Hello World! Sigma Boi');
 });
