@@ -1,26 +1,17 @@
-// Run this script with: node day1/app.js or node day1/app
-// console.log("hello nodejs environment");
-
 import express from 'express';
 import dotenv from "dotenv";
 
 dotenv.config();
-
 const app = express();
-
-// dotenv loads environment variables from a .env file.
-// It is commonly used to store private information like PORT, API keys, or database URLs.
-// If you add .env to .gitignore, it will not be pushed to GitHub.
 const port = process.env.PORT || 3000;
+//SET VIEW ENGINE TO YOUR APP
+app.set("view engine", "ejs")
+app.set("views", "./src/views")
 
-// app.get() defines a route for a specific URL path.
-// For example, "/" means localhost:3000/
-// If you create "/student", it means localhost:3000/studentƯ
-app.get('/', (req, res) => { //req is request and res is respond
-    res.send('Hello World! Sigma Boi');
+//ROUTE DECLARATION
+app.get('/', (req, res) => {
+    res.render("home.ejs")
 });
-
-// app.listen() starts the server on the selected port.
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
