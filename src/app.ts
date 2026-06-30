@@ -1,15 +1,18 @@
 import express from 'express';
 import dotenv from "dotenv";
 import userRoute from './routes/userRoute.js';
+import { __dirname } from './config.js';
 
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 //SET VIEW ENGINE TO YOUR APP
 app.set("view engine", "ejs")
-app.set("views", "./src/views")
-
-app.use("/users", userRoute)
+app.set("views", __dirname + "/views")
+//IMPORT ROUTE
+userRoute(app)
+//IMPORT STATIC FILE IMAGES/CSS/JS
+app.use(express.static(__dirname + "/public"))
 //ROUTE DECLARATION
 app.get('/', (req, res) => {
     res.render("home.ejs")

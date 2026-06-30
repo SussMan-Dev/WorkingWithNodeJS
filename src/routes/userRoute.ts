@@ -1,8 +1,10 @@
-import express from 'express';
-const userRoute = express.Router();
+import { Express } from "express";
+import express from "express"
+const userRoute = express.Router()
 
-userRoute.get('/', (req, res) => {
-    res.send("hello users")
-});
-
-export default userRoute;
+export default function userRoutes(app: Express) {
+    userRoute.get("/", (req, res) => {
+        res.send("this is user Route2!")
+    })
+    app.use("/users", userRoute)
+}
