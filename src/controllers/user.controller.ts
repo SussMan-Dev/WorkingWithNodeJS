@@ -9,7 +9,7 @@ const getCreateUserForm = (req: Request, res: Response) => {
     return res.render("user/createUser.ejs")
 }
 const createUser = (req: Request, res: Response) => {
-    const { name, email, age } = req.body
+    const { username, password } = req.body
     console.log("Check data", req.body);
     return res.redirect("/users");
 }

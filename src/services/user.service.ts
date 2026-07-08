@@ -5,4 +5,6 @@ async function getAllUsers(): Promise<User[]> {
     return findAllUsers();
 }
 
+async function createUser(user: User) {
+}
 export { getAllUsers };

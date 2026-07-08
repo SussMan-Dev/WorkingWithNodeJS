@@ -10,4 +10,10 @@ async function findAllUsers(): Promise<User[]> {
     return rows;
 }
 
+async function createUser(): Promise<User[]> {
+    const db = await connectDB();
+    const [rows] = await db.execute<UserRow[]>("SELECT * FROM users");
+    return rows;
+}
+
 export { findAllUsers };
