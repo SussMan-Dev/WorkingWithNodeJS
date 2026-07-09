@@ -8,9 +8,25 @@ const getUserData = async (req: Request, res: Response) => {
 const showCreateUserForm = (req: Request, res: Response) => {
     return res.render("user/createUser.ejs")
 }
-const createUser = (req: Request, res: Response) => {
-    const { username, password } = req.body
-    createUserService(username, password)
+const createUser = async (req: Request, res: Response) => {
+    const { username, password, confirmPassword } = req.body
+
+    if (password !== confirmPassword) {
+        return res.render("user/createUser.ejs", {
+            error: "Passwords do not match",
+            username
+        });
+    }
+
+    const created = await createUserService(username, password)
+
+    if (!created) {
+        return res.render("user/createUser.ejs", {
+            error: "Username already exists",
+            username
+        });
+    }
+
     return res.redirect("/users");
 }
 export { getUserData, createUser, showCreateUserForm }

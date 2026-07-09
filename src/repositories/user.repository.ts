@@ -8,7 +8,7 @@ async function findUserByUsername(username: string): Promise<boolean> {
     const db = await connectDB();
 
     const [rows] = await db.execute<UserRow[]>(
-        "SELECT * FROM users WHERE username = ? LIMIT 1",
+        "SELECT 1 FROM users WHERE username = ? LIMIT 1",
         [username]
     );
 
@@ -23,7 +23,7 @@ async function findAll(): Promise<User[]> {
 
 async function create(user: User): Promise<void> {
     const db = await connectDB()
-    const [result] = await db.execute<ResultSetHeader>("INSERT INTO users (username, password) VALUES (?, ?)",
+    await db.execute<ResultSetHeader>("INSERT INTO users (username, password) VALUES (?, ?)",
         [user.username, user.password])
 }
 export { findAll, findUserByUsername, create };

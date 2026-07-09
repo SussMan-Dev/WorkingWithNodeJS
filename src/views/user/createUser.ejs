@@ -12,11 +12,17 @@
 <body>
     <h1 style="justify-content:center; display: flex; ">Creating new User</h1>
     <div class="container-sm">
+        <% if (typeof error !== "undefined" && error) { %>
+            <div class="alert alert-danger" role="alert">
+                <%= error %>
+            </div>
+        <% } %>
+
         <form action="/users/createUser" method="post" id="userForm">
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">UserName</label>
                 <input name="username" type="text" class="form-control" id="exampleFormControlInput1"
-                    placeholder="Enter Username">
+                    placeholder="Enter Username" value="<%= typeof username !== 'undefined' ? username : '' %>">
             </div>
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">PassWord</label>
