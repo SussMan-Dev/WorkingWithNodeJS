@@ -1,16 +1,16 @@
 import { Response, Request } from "express";
-import { getAllUsers } from "../services/user.service.js";
+import { getUsers, createUser as createUserService } from "../services/user.service.js";
 
 const getUserData = async (req: Request, res: Response) => {
-    const users = await getAllUsers()
+    const users = await getUsers()
     return res.render("user/userList.ejs", { users })
 }
-const getCreateUserForm = (req: Request, res: Response) => {
+const showCreateUserForm = (req: Request, res: Response) => {
     return res.render("user/createUser.ejs")
 }
 const createUser = (req: Request, res: Response) => {
     const { username, password } = req.body
-    console.log("Check data", req.body);
+    createUserService(username, password)
     return res.redirect("/users");
 }
-export { getUserData, createUser, getCreateUserForm }
+export { getUserData, createUser, showCreateUserForm }

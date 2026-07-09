@@ -1,10 +1,17 @@
 import type { User } from "../models/userModel.js";
-import { findAllUsers } from "../repositories/user.repository.js";
+import { findAll, findUserByUsername, create } from "../repositories/user.repository.js";
 
-async function getAllUsers(): Promise<User[]> {
-    return findAllUsers();
+async function getUsers(): Promise<User[]> {
+    return findAll();
 }
 
-async function createUser(user: User) {
+async function createUser(username: string, password: string) {
+    if (await findUserByUsername(username)) {
+        return
+    }
+    else {
+        const user = { username: username, password: password }
+        await create(user)
+    }
 }
-export { getAllUsers };
+export { getUsers, createUser };
