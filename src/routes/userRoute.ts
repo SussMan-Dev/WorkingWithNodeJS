@@ -1,11 +1,8 @@
-import { Express } from "express";
-import express from "express"
-import { createUser, showCreateUserForm, getUserData } from "../controllers/user.controller.js";
-const userRoute = express.Router()
+import type { Express } from "express";
+import { renderUserList } from "../controllers/user.controller.js";
 
-export default function userRoutes(app: Express) {
-    userRoute.get("/", getUserData)
-    userRoute.get("/createUser", showCreateUserForm)
-    userRoute.post("/createUser", createUser)
-    app.use("/users", userRoute)
-}
+const registerUserRoutes = (app: Express): void => {
+    app.get("/users", renderUserList);
+};
+
+export { registerUserRoutes };
