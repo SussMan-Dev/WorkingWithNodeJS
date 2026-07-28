@@ -5,7 +5,7 @@ const getAllUsers = (): Promise<User[]> => {
     return findAllUsers();
 };
 
-const create = (username: string, password: string) => {
-    return createUser(username, password)
+const create = async (username: string, password: string) => {
+    return await createUser(username, password)
 }
 export { getAllUsers, create };
