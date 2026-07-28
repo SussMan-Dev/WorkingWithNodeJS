@@ -11,11 +11,11 @@
 
 <body>
     <h1 style="justify-self:center">User List</h1>
-
+    <button class="btn btn-primary">Create new User</button>
+    <a href="/users/create">Create new User</a>
     <table class="table table-hover">
         <thead>
             <tr>
-                <th scope="col">UserId</th>
                 <th scope="col">UserName</th>
                 <th scope="col">Password</th>
                 <th scope="col">Action</th>
@@ -24,9 +24,6 @@
         <tbody>
             <% users.forEach(function(user) { %>
                 <tr>
-                    <th scope="row">
-                        <%= user.userId %>
-                    </th>
                     <td>
                         <%= user.username %>
                     </td>

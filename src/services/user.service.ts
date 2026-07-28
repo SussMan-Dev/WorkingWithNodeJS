@@ -1,8 +1,11 @@
 import type { User } from "../models/userModel.js";
-import { findAllUsers } from "../repositories/user.repository.js";
+import { createUser, findAllUsers } from "../repositories/user.repository.js";
 
-const getAllUser = (): Promise<User[]> => {
+const getAllUsers = (): Promise<User[]> => {
     return findAllUsers();
 };
 
-export { getAllUser };
+const create = (username: string, password: string) => {
+    return createUser(username, password)
+}
+export { getAllUsers, create };

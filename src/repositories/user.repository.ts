@@ -1,4 +1,4 @@
-import type { RowDataPacket } from "mysql2";
+import type { ResultSetHeader, RowDataPacket } from "mysql2";
 import { connectDB } from "../config/db.js";
 import type { User } from "../models/userModel.js";
 
@@ -13,8 +13,17 @@ const findAllUsers = async (): Promise<User[]> => {
     finally {
         await db.end()
     }
-
-
 };
 
-export { findAllUsers };
+const createUser = async (username: string, password: string) => {
+    const db = await connectDB();
+    try {
+        const [result] = await db.execute<ResultSetHeader>("INSERT INTO users (username, password) VALUES(?,?)", [username, password])
+        return result.insertId;
+    }
+    finally {
+        await db.end()
+    }
+}
+
+export { findAllUsers, createUser };
