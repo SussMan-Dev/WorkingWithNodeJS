@@ -1,5 +1,5 @@
 import { User } from "../models/userModel.js"
-import { create, getAllUsers } from "../services/user.service.js"
+import { create, getAllUsers, getUserForEdit } from "../services/user.service.js"
 import type { Request, Response } from "express";
 
 const renderUserList = async (_req: Request, res: Response): Promise<void> => {
@@ -12,7 +12,7 @@ const renderUserList = async (_req: Request, res: Response): Promise<void> => {
 };
 
 const renderCreateUserForm = (_req: Request, res: Response) => {
-    res.render("user/createUser.ejs")
+    res.render("user/create.ejs")
 }
 
 const handleCreateUser = async (
@@ -22,7 +22,7 @@ const handleCreateUser = async (
     const { username, password, confirmPassword } = req.body;
 
     if (!username?.trim() || !password || !confirmPassword) {
-        res.status(400).render("user/createUser.ejs", {
+        res.status(400).render("user/create.ejs", {
             error: "Please enter all required information",
             username
         });
@@ -30,7 +30,7 @@ const handleCreateUser = async (
     }
 
     if (password !== confirmPassword) {
-        res.status(400).render("user/createUser.ejs", {
+        res.status(400).render("user/create.ejs", {
             error: "Confirm password must match password",
             username
         });
@@ -43,11 +43,29 @@ const handleCreateUser = async (
     } catch (error) {
         console.error("Failed to create user:", error);
 
-        res.status(500).render("user/createUser.ejs", {
+        res.status(500).render("user/create.ejs", {
             error: "Unable to create user. Please try again.",
             username
         });
     }
 };
 
-export { renderUserList, renderCreateUserForm, handleCreateUser }
+const renderEditForm = async (req: Request, res: Response) => {
+    const id = Number(req.params.id)
+    if (!Number.isInteger(id) || id <= 0) {
+        res.status(400).send("Invalid Id");
+        return;
+    }
+    try {
+        const user = await getUserForEdit(id);
+        if (!user) {
+            res.status(400).send("User not found");
+            return;
+        }
+        res.render("user/edit", { user })
+        return
+    }
+    catch (error) { throw error }
+}
+
+export { renderUserList, renderCreateUserForm, handleCreateUser, renderEditForm }
