@@ -1,5 +1,5 @@
 import { User } from "../models/userModel.js"
-import { create, getAllUsers, getUserForEdit } from "../services/user.service.js"
+import { create, edit, getAllUsers, getUserForEdit } from "../services/user.service.js"
 import type { Request, Response } from "express";
 
 const renderUserList = async (_req: Request, res: Response): Promise<void> => {
@@ -59,7 +59,7 @@ const renderEditForm = async (req: Request, res: Response) => {
     try {
         const user = await getUserForEdit(id);
         if (!user) {
-            res.status(400).send("User not found");
+            res.status(400).send("not found");
             return;
         }
         res.render("user/edit", { user })
@@ -68,4 +68,40 @@ const renderEditForm = async (req: Request, res: Response) => {
     catch (error) { throw error }
 }
 
-export { renderUserList, renderCreateUserForm, handleCreateUser, renderEditForm }
+const handleEditUser = async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    const user = await getUserForEdit(id);
+    const { username, password, confirmPassword } = req.body;
+
+    if (!username || !password || !confirmPassword) {
+        return res.status(400).render("user/edit.ejs", {
+            error: "Please enter all required information",
+            user
+        });
+    }
+
+    if (password !== confirmPassword) {
+        return res.status(400).render("user/edit.ejs", {
+            error: "Confirm password must match password",
+            user,
+        });
+    }
+
+    if (Number.isNaN(id)) {
+        return res.status(400).send("Invalid user ID");
+    }
+
+    try {
+        await edit(id, username.trim(), password);
+        return res.redirect("/users");
+    } catch (error) {
+        console.error("Failed to edit user:", error);
+
+        return res.status(500).render("user/edit.ejs", {
+            error: "Unable to edit user. Please try again.",
+            user,
+        });
+    }
+};
+
+export { renderUserList, renderCreateUserForm, handleCreateUser, renderEditForm, handleEditUser }

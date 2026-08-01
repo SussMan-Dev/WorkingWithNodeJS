@@ -1,7 +1,6 @@
 import type { ResultSetHeader, RowDataPacket } from "mysql2";
 import { connectDB } from "../config/db.js";
 import type { User } from "../models/userModel.js";
-import { promises } from "node:dns";
 
 type UserRow = User & RowDataPacket;
 
@@ -15,6 +14,7 @@ const findAllUsers = async (): Promise<User[]> => {
         await db.end()
     }
 };
+
 const findUser = async (id: number) => {
     const db = await connectDB();
     try {
@@ -40,7 +40,7 @@ const createUser = async (username: string, password: string) => {
 const updateUser = async (id: number, username: string, password: string) => {
     const db = await connectDB();
     try {
-        await db.execute("UPDATE users SET username = ?, password = ? WHERE id = ? ", [username, password, id])
+        await db.execute("UPDATE users SET username = ?, password = ? WHERE userId = ? ", [username, password, id])
     }
     finally {
         await db.end();
