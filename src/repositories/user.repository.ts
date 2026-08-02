@@ -47,4 +47,14 @@ const updateUser = async (id: number, username: string, password: string) => {
     }
 }
 
-export { findAllUsers, createUser, findUser, updateUser };
+const deleteById = async (id: number) => {
+    const db = await connectDB()
+    try {
+        await db.execute("DELETE FROM users where userId = ?", [id])
+    }
+    finally {
+        await db.end()
+    }
+}
+
+export { findAllUsers, createUser, findUser, updateUser, deleteById };

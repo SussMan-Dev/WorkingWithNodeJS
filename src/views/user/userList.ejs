@@ -29,9 +29,11 @@
                     <td>
                         <%= user.password %>
                     </td>
-                    <td>
+                    <td class="d-flex p-2 gap-2">
                         <a href="/users/edit/<%= user.userId %>" class="btn btn-primary">Edit</a>
-                        <button class="btn btn-danger">Delete</button>
+                        <form action="/users/<%= user.userId %>" method="post">
+                            <button class="btn btn-danger" type="submit">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 <% }); %>

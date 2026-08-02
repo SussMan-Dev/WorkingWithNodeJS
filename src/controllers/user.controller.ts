@@ -1,5 +1,5 @@
 import { User } from "../models/userModel.js"
-import { create, edit, getAllUsers, getUserForEdit } from "../services/user.service.js"
+import { create, edit, getAllUsers, getUserForEdit, remove } from "../services/user.service.js"
 import type { Request, Response } from "express";
 
 const renderUserList = async (_req: Request, res: Response): Promise<void> => {
@@ -104,4 +104,18 @@ const handleEditUser = async (req: Request, res: Response) => {
     }
 };
 
-export { renderUserList, renderCreateUserForm, handleCreateUser, renderEditForm, handleEditUser }
+const handleDeleteUser = async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    try {
+        await remove(id)
+    }
+    catch (err) {
+        res.status(500).send("can't delete user!")
+    }
+    finally {
+        res.redirect("/users")
+    }
+
+}
+
+export { renderUserList, renderCreateUserForm, handleCreateUser, renderEditForm, handleEditUser, handleDeleteUser }
