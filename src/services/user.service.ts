@@ -1,5 +1,5 @@
 import type { User } from "../models/userModel.js";
-import { createUser, deleteById, findAllUsers, findUser, updateUser } from "../repositories/user.repository.js";
+import { createUser, deleteById, findAllUsers, findUser, searchUserByUserName, updateUser } from "../repositories/user.repository.js";
 
 const getAllUsers = (): Promise<User[]> => {
     return findAllUsers();
@@ -20,4 +20,10 @@ const edit = async (id: number, username: string, password: string) => {
 const remove = async (id: number) => {
     return await deleteById(id)
 }
-export { getAllUsers, create, getUserForEdit, edit, remove };
+
+const searchUser = async (username: string) => {
+    const users = await searchUserByUserName(username)
+    return users
+}
+
+export { getAllUsers, create, getUserForEdit, edit, remove, searchUser };

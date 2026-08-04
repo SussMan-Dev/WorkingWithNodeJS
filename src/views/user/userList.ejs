@@ -11,7 +11,18 @@
 
 <body>
     <h1 style="justify-self:center">User List</h1>
-    <a class="btn btn-primary" href="/users/create">Create new User</a>
+    <a class="btn btn-primary m-3" href="/users/create">Create new User</a>
+    <div class="m-3">
+        <form class="d-flex gap-2 m-3 align-items-center" method="get" action="/users">
+            <label for="keyword" class="form-label mb-0">Enter Username:</label>
+            <input type="text" class="form-control w-25" id="username" name="keyword"
+                placeholder="Enter username you're finding">
+            <button type="submit" class="btn btn-primary">
+                Submit
+            </button>
+        </form>
+    </div>
+
     <table class="table table-hover">
         <thead>
             <tr>

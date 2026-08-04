@@ -57,4 +57,18 @@ const deleteById = async (id: number) => {
     }
 }
 
-export { findAllUsers, createUser, findUser, updateUser, deleteById };
+const searchUserByUserName = async (username: string) => {
+    const db = await connectDB();
+    try {
+        const [rows] = await db.execute<UserRow[]>(
+            "SELECT userId, username, password FROM users WHERE username LIKE ?",
+            [`%${username}%`]
+        );
+        return rows;
+    }
+    finally {
+        await db.end()
+    }
+}
+
+export { findAllUsers, createUser, findUser, updateUser, deleteById, searchUserByUserName };

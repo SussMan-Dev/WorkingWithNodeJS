@@ -14,7 +14,6 @@ const port = process.env.PORT || 3000;
 //SET VIEW ENGINE TO YOUR APP
 app.set("view engine", "ejs")
 app.set("views", path.join(__dirname, "views"));
-console.log("__dirname:", __dirname);
 
 //ALLOW READING DATA FROM FORM AND HANDLE JSON REQUEST
 app.use(express.urlencoded({ extended: true }));
