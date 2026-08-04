@@ -3,16 +3,18 @@ import { create, edit, getAllUsers, getUserForEdit, remove, searchUser } from ".
 import type { Request, Response } from "express";
 
 const renderUserList = async (req: Request, res: Response): Promise<void> => {
-    const keyword = req.query.keyword as string
-    let users: User[]
+    const keyword = req.query.keyword as string;
+    let users: User[];
+
     if (keyword) {
         users = await searchUser(keyword);
-        res.render("user/userList.ejs", { users })
-    }
-    else {
+    } else {
         users = await getAllUsers();
-        res.render("user/userList.ejs", { users })
     }
+    res.render("user/userList.ejs", {
+        users,
+        keyword,
+    });
 };
 
 const renderCreateUserForm = (_req: Request, res: Response) => {
