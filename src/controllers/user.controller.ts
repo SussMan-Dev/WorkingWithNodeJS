@@ -4,17 +4,16 @@ import type { Request, Response } from "express";
 
 const renderUserList = async (req: Request, res: Response): Promise<void> => {
     const keyword = req.query.keyword as string;
-    let users: User[];
-
-    if (keyword) {
-        users = await searchUser(keyword);
-    } else {
-        users = await getAllUsers();
+    try {
+        let users: User[] = keyword ? await searchUser(keyword) : await getAllUsers();
+        res.render("user/userList.ejs", {
+            users,
+            keyword,
+        });
     }
-    res.render("user/userList.ejs", {
-        users,
-        keyword,
-    });
+    catch (error) {
+        res.status(500).send("Internal Server Error");
+    }
 };
 
 const renderCreateUserForm = (_req: Request, res: Response) => {
@@ -27,7 +26,9 @@ const handleCreateUser = async (
 ): Promise<void> => {
     const { username, password, confirmPassword } = req.body;
 
-    if (!username?.trim() || !password || !confirmPassword) {
+    const trimmedUsername = username.trim();
+
+    if (!trimmedUsername || !password || !confirmPassword) {
         res.status(400).render("user/create", {
             error: "Please enter all required information",
             username
@@ -44,11 +45,9 @@ const handleCreateUser = async (
     }
 
     try {
-        await create(username.trim(), password);
+        await create(trimmedUsername, password);
         res.redirect("/users");
     } catch (error) {
-        console.error("Failed to create user:", error);
-
         res.status(500).render("user/create", {
             error: "Unable to create user. Please try again.",
             username
@@ -64,20 +63,21 @@ const renderEditForm = async (req: Request, res: Response) => {
     }
     try {
         const user = await getUserForEdit(id);
-        if (!user) {
-            res.status(400).send("not found");
-            return;
-        }
         res.render("user/edit", { user })
-        return
     }
-    catch (error) { throw error }
+    catch (error) {
+        res.status(404).send("404 Not Found");
+    }
 }
 
 const handleEditUser = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const user = await getUserForEdit(id);
     const { username, password, confirmPassword } = req.body;
+    //validate
+    if (Number.isNaN(id)) {
+        return res.status(400).send("Invalid user ID");
+    }
 
     if (!username || !password || !confirmPassword) {
         return res.status(400).render("user/edit", {
@@ -93,17 +93,11 @@ const handleEditUser = async (req: Request, res: Response) => {
         });
     }
 
-    if (Number.isNaN(id)) {
-        return res.status(400).send("Invalid user ID");
-    }
-
     try {
         await edit(id, username.trim(), password);
         return res.redirect("/users");
     } catch (error) {
-        console.error("Failed to edit user:", error);
-
-        return res.status(500).render("user/edit", {
+        res.status(500).render("user/edit", {
             error: "Unable to edit user. Please try again.",
             user,
         });
@@ -114,14 +108,11 @@ const handleDeleteUser = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     try {
         await remove(id)
+        res.redirect("/users")
     }
     catch (err) {
         res.status(500).send("Internal Server Error");
     }
-    finally {
-        res.redirect("/users")
-    }
-
 }
 
 export { renderUserList, renderCreateUserForm, handleCreateUser, renderEditForm, handleEditUser, handleDeleteUser }

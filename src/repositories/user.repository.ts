@@ -1,74 +1,59 @@
-import type { ResultSetHeader, RowDataPacket } from "mysql2";
-import { connectDB } from "../config/db.js";
+import prisma from "../config/db.js";
 import type { User } from "../models/userModel.js";
 
-type UserRow = User & RowDataPacket;
-
 const findAllUsers = async (): Promise<User[]> => {
-    const db = await connectDB();
-    try {
-        const [rows] = await db.execute<UserRow[]>("SELECT * FROM users");
-        return rows;
-    }
-    finally {
-        await db.end()
-    }
+    const users = await prisma.user.findMany()
+    return users
 };
 
-const findUser = async (id: number) => {
-    const db = await connectDB();
-    try {
-        const [rows] = await db.execute<UserRow[]>("SELECT userId, username, password FROM users WHERE userId = ? ", [id])
-        return rows[0] ?? null;
-    }
-    finally {
-        await db.end()
-    }
+const findUser = async (id: number): Promise<User> => {
+    const user = await prisma.user.findUniqueOrThrow(
+        { where: { userId: id } }
+    )
+    return user
 }
 
-const createUser = async (username: string, password: string) => {
-    const db = await connectDB();
-    try {
-        const [result] = await db.execute<ResultSetHeader>("INSERT INTO users (username, password) VALUES(?,?)", [username, password])
-        return result.insertId;
-    }
-    finally {
-        await db.end()
-    }
+const createUser = async (username: string, password: string): Promise<User> => {
+    const newUser = await prisma.user.create({
+        data: {
+            username: username,
+            password: password,
+        }
+    })
+    return newUser;
 }
 
-const updateUser = async (id: number, username: string, password: string) => {
-    const db = await connectDB();
-    try {
-        await db.execute("UPDATE users SET username = ?, password = ? WHERE userId = ? ", [username, password, id])
-    }
-    finally {
-        await db.end();
-    }
+const updateUser = async (id: number, username: string, password: string): Promise<User> => {
+    const updatedUser = await prisma.user.update(
+        {
+            where: {
+                userId: id
+            },
+            data: {
+                username: username,
+                password: password,
+            }
+        }
+    )
+    return updatedUser
 }
 
-const deleteById = async (id: number) => {
-    const db = await connectDB()
-    try {
-        await db.execute("DELETE FROM users where userId = ?", [id])
-    }
-    finally {
-        await db.end()
-    }
+const deleteById = async (id: number): Promise<User> => {
+    const deletedUser = await prisma.user.delete({
+        where: { userId: id }
+    })
+    return deletedUser
 }
 
-const searchUserByUserName = async (username: string) => {
-    const db = await connectDB();
-    try {
-        const [rows] = await db.execute<UserRow[]>(
-            "SELECT userId, username, password FROM users WHERE username LIKE ?",
-            [`%${username}%`]
-        );
-        return rows;
-    }
-    finally {
-        await db.end()
-    }
+const searchUserByUserName = async (keyword: string): Promise<User[]> => {
+    const users = await prisma.user.findMany({
+        where: {
+            username: {
+                contains: keyword,
+            }
+        }
+    })
+    return users
 }
 
 export { findAllUsers, createUser, findUser, updateUser, deleteById, searchUserByUserName };

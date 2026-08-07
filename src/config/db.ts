@@ -1,12 +1,13 @@
-import mysql from "mysql2/promise";
-async function connectDB() {
-    const db = await mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "123456",
-        database: "ticketmanagement"
-    });
-    console.log("Connected to MySQL database");
-    return db;
-}
-export { connectDB }
+import { PrismaClient } from "../generated/prisma/client.js";
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+
+const adapter = new PrismaMariaDb({
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "123456",
+    database: "ticketmanagement"
+});
+
+const prisma = new PrismaClient({ adapter });
+export default prisma;
