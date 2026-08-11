@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `users` MODIFY `dateOfBirth` DATE NULL,
+    MODIFY `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3);

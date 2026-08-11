@@ -1,59 +1,97 @@
 import prisma from "../config/db.js";
-import type { User } from "../models/userModel.js";
 
-const findAllUsers = async (): Promise<User[]> => {
-    const users = await prisma.user.findMany()
-    return users
-};
-
-const findUser = async (id: number): Promise<User> => {
-    const user = await prisma.user.findUniqueOrThrow(
-        { where: { userId: id } }
-    )
-    return user
-}
-
-const createUser = async (username: string, password: string): Promise<User> => {
-    const newUser = await prisma.user.create({
-        data: {
-            username: username,
-            password: password,
-        }
-    })
-    return newUser;
-}
-
-const updateUser = async (id: number, username: string, password: string): Promise<User> => {
-    const updatedUser = await prisma.user.update(
+const findAllUsers = async () => {
+    const users = await prisma.user.findMany(
         {
-            where: {
-                userId: id
-            },
-            data: {
-                username: username,
-                password: password,
+            select: {
+                userId: true,
+                username: true,
+                dateOfBirth: true,
+                createdAt: true,
+                updatedAt: true,
             }
         }
     )
-    return updatedUser
+    return users.map((user) => ({
+        ...user,
+        dateOfBirth: user.dateOfBirth ? user.dateOfBirth.toISOString().split("T")[0] : null
+    }))
+};
+
+const findUser = async (id: number) => {
+    const user = await prisma.user.findUniqueOrThrow({
+        where: { userId: id },
+        select: {
+            userId: true,
+            username: true,
+            dateOfBirth: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
+
+    return {
+        ...user,
+        dateOfBirth: user.dateOfBirth
+            ? user.dateOfBirth.toISOString().split("T")[0]
+            : null,
+    };
 }
 
-const deleteById = async (id: number): Promise<User> => {
-    const deletedUser = await prisma.user.delete({
-        where: { userId: id }
-    })
-    return deletedUser
-}
+// const createUser = async (username: string, password: string): Promise<User> => {
+//     const newUser = await prisma.user.create({
+//         data: {
+//             username: username,
+//             password: password,
+//         }
+//     })
+//     return newUser;
+// }
 
-const searchUserByUserName = async (keyword: string): Promise<User[]> => {
+// const updateUser = async (id: number, username: string, password: string): Promise<User> => {
+//     const updatedUser = await prisma.user.update(
+//         {
+//             where: {
+//                 userId: id
+//             },
+//             data: {
+//                 username: username,
+//                 password: password,
+//             }
+//         }
+//     )
+//     return updatedUser
+// }
+
+// const deleteById = async (id: number): Promise<User> => {
+//     const deletedUser = await prisma.user.delete({
+//         where: { userId: id }
+//     })
+//     return deletedUser
+// }
+
+const searchUserByUserName = async (keyword: string) => {
     const users = await prisma.user.findMany({
+        select: {
+            userId: true,
+            username: true,
+            dateOfBirth: true,
+            createdAt: true,
+            updatedAt: true,
+        },
         where: {
             username: {
                 contains: keyword,
-            }
-        }
-    })
-    return users
-}
+            },
+        },
+    });
 
-export { findAllUsers, createUser, findUser, updateUser, deleteById, searchUserByUserName };
+    return users.map((user) => ({
+        ...user,
+        dateOfBirth: user.dateOfBirth
+            ? user.dateOfBirth.toISOString().split("T")[0]
+            : null,
+    }));
+};
+// , createUser, findUser, updateUser, deleteById, searchUserByUserName
+export { findAllUsers, searchUserByUserName, findUser };
