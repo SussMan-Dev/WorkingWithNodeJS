@@ -1,7 +1,9 @@
 // import { create, edit, getAllUsers, getUserForEdit, remove, searchUser } from "../services/user.service.js"
-import type { Request, Response } from "express";
-import { getAllUsers, getUserForEdit, searchUser } from "../services/user.service.js";
+import { type Request, type Response } from "express";
+import { create, edit, findUser, getAllUsers, getUser, searchUser } from "../services/user.service.js";
+import { log } from "console";
 
+//Render UI
 const renderUserList = async (req: Request, res: Response): Promise<void> => {
     const keyword = req.query.keyword as string;
     try {
@@ -16,99 +18,119 @@ const renderUserList = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-// const handleCreateUser = async (
-//     req: Request,
-//     res: Response
-// ): Promise<void> => {
-//     const { username, password, confirmPassword } = req.body;
-
-//     const trimmedUsername = username.trim();
-
-//     if (!trimmedUsername || !password || !confirmPassword) {
-//         res.status(400).render("user/create", {
-//             error: "Please enter all required information",
-//             username
-//         });
-//         return;
-//     }
-
-//     if (password !== confirmPassword) {
-//         res.status(400).render("user/create", {
-//             error: "Confirm password must match password",
-//             username
-//         });
-//         return;
-//     }
-
-//     try {
-//         await create(trimmedUsername, password);
-//         res.redirect("/users");
-//     } catch (error) {
-//         res.status(500).render("user/create", {
-//             error: "Unable to create user. Please try again.",
-//             username
-//         });
-//     }
-// };
-
-const renderEditForm = async (req: Request, res: Response) => {
-    const id = Number(req.params.id)
-    if (!Number.isInteger(id) || id <= 0) {
-        res.status(400).send("Invalid Id");
-        return;
-    }
+const renderCreateUserForm = (req: Request, res: Response) => {
     try {
-        const user = await getUserForEdit(id);
-        res.render("user/edit", { user })
+        res.status(200).render("user/create")
     }
-    catch (error) {
-        res.status(404).send("404 Not Found");
+    catch {
+        res.status(500).json("Internal Server Error")
     }
 }
 
-// const handleEditUser = async (req: Request, res: Response) => {
-//     const id = Number(req.params.id);
-//     const user = await getUserForEdit(id);
-//     const { username, password, confirmPassword } = req.body;
-//     //validate
-//     if (Number.isNaN(id)) {
-//         return res.status(400).send("Invalid user ID");
-//     }
+const renderEditForm = async (req: Request, res: Response) => {
+    try {
+        const id = Number(req.params.id)
+        const user = await getUser(id)
+        res.status(200).render("user/edit", { user })
+    }
+    catch {
+        res.status(500).json("Internal Server Error")
+    }
+}
 
-//     if (!username || !password || !confirmPassword) {
-//         return res.status(400).render("user/edit", {
-//             error: "Please enter all required information",
-//             user
-//         });
-//     }
+// Logic
+const handleGetUsers = async (req: Request, res: Response) => {
+    try {
+        const users = await getAllUsers()
+        res.status(200).send(users)
+    }
+    catch {
+        res.status(500).json("Internal Server Error")
+    }
 
-//     if (password !== confirmPassword) {
-//         return res.status(400).render("user/edit", {
-//             error: "Confirm password must match password",
-//             user,
-//         });
-//     }
+}
 
-//     try {
-//         await edit(id, username.trim(), password);
-//         return res.redirect("/users");
-//     } catch (error) {
-//         res.status(500).render("user/edit", {
-//             error: "Unable to edit user. Please try again.",
-//             user,
-//         });
-//     }
-// };
+const handleGetUser = async (req: Request, res: Response) => {
+    try {
+        const id = Number(req.params.id)
+        const user = await findUser(id)
+        res.status(200).send(user)
+    }
+    catch {
+        res.status(500).json("Internal Server Error")
+    }
 
-// const handleDeleteUser = async (req: Request, res: Response) => {
-//     const id = Number(req.params.id);
-//     try {
-//         await remove(id)
-//         res.redirect("/users")
-//     }
-//     catch (err) {
-//         res.status(500).send("Internal Server Error");
-//     }
-// }
-// renderCreateUserForm, handleCreateUser, renderEditForm, handleEditUser, handleDeleteUser
-export { renderUserList, renderEditForm }
+}
+
+const handleCreateUser = async (req: Request, res: Response) => {
+    const { username, password, dateOfBirth, confirmPassword } = req.body;
+    const birthDate = new Date(dateOfBirth);
+
+    if (Number.isNaN(birthDate.getTime())) {
+        return res.status(400).render("user/create", {
+            error: "Ngày sinh không hợp lệ",
+            username,
+        });
+    }
+    if (!username || !dateOfBirth || !password || !confirmPassword) {
+        return res.status(400).render("user/create", {
+            error: "Please enter all required information",
+            username,
+        });
+    }
+
+    if (password !== confirmPassword) {
+        return res.status(400).render("user/create", {
+            error: "Password and confirm password must be same",
+            username,
+        });
+    }
+    console.log(req.body);
+    try {
+        await create(username.trim(), password, birthDate);
+        return res.redirect("/users");
+    } catch {
+
+
+        return res.status(500).render("user/create", {
+            error: "Unable to create user. Username may already exist.",
+            username,
+        });
+    }
+};
+
+const handleEditUser = async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    const user = await getUser(id);
+    const { username, password, confirmPassword } = req.body;
+    //validate
+    if (Number.isNaN(id)) {
+        return res.status(400).send("Invalid user ID");
+    }
+
+    if (!username || !password || !confirmPassword) {
+        return res.status(400).render("user/edit", {
+            error: "Please enter all required information",
+            user
+        });
+    }
+
+    if (password !== confirmPassword) {
+        return res.status(400).render("user/edit", {
+            error: "Confirm password must match password",
+            user,
+        });
+    }
+
+    try {
+        await edit(id, username.trim(), password);
+        return res.redirect("/users");
+    } catch (error) {
+        res.status(500).render("user/edit", {
+            error: "Unable to edit user. Please try again.",
+            user,
+        });
+    }
+};
+
+export { renderUserList, renderCreateUserForm, handleEditUser, handleGetUsers, handleGetUser, handleCreateUser, renderEditForm }

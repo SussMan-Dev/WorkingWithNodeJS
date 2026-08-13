@@ -38,37 +38,38 @@ const findUser = async (id: number) => {
     };
 }
 
-// const createUser = async (username: string, password: string): Promise<User> => {
-//     const newUser = await prisma.user.create({
-//         data: {
-//             username: username,
-//             password: password,
-//         }
-//     })
-//     return newUser;
-// }
+const createUser = async (username: string, password: string, dateOfBirth: Date) => {
+    const newUser = await prisma.user.create({
+        data: {
+            username: username,
+            password: password,
+            dateOfBirth: dateOfBirth
+        }
+    })
+    return newUser;
+}
 
-// const updateUser = async (id: number, username: string, password: string): Promise<User> => {
-//     const updatedUser = await prisma.user.update(
-//         {
-//             where: {
-//                 userId: id
-//             },
-//             data: {
-//                 username: username,
-//                 password: password,
-//             }
-//         }
-//     )
-//     return updatedUser
-// }
+const updateUser = async (id: number, username: string, password: string) => {
+    const updatedUser = await prisma.user.update(
+        {
+            where: {
+                userId: id
+            },
+            data: {
+                username: username,
+                password: password,
+            }
+        }
+    )
+    return updatedUser
+}
 
-// const deleteById = async (id: number): Promise<User> => {
-//     const deletedUser = await prisma.user.delete({
-//         where: { userId: id }
-//     })
-//     return deletedUser
-// }
+const deleteById = async (id: number) => {
+    const deletedUser = await prisma.user.delete({
+        where: { userId: id }
+    })
+    return deletedUser
+}
 
 const searchUserByUserName = async (keyword: string) => {
     const users = await prisma.user.findMany({
@@ -94,4 +95,4 @@ const searchUserByUserName = async (keyword: string) => {
     }));
 };
 // , createUser, findUser, updateUser, deleteById, searchUserByUserName
-export { findAllUsers, searchUserByUserName, findUser };
+export { findAllUsers, searchUserByUserName, findUser, updateUser, createUser };

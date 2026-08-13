@@ -18,21 +18,27 @@
             </div>
             <% } %>
 
-                <form action="/users/create" method="post" id="userForm">
+                <form action="/api/v1/users" method="post" id="userForm">
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">UserName</label>
+                        <label for="exampleFormControlInput1" class="form-label">UserName:</label>
                         <input name="username" type="text" class="form-control" id="exampleFormControlInput1"
                             placeholder="Enter Username" value="<%= typeof username !== 'undefined' ? username : '' %>">
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">PassWord</label>
-                        <input name="password" type="password" class="form-control" id="exampleFormControlInput1"
+                        <label for="exampleFormControlInput1" class="form-label">BirthDay:</label>
+                        <input name="dateOfBirth" type="date" class="form-control" id="exampleFormControlInput1"
                             placeholder="Enter Password">
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Confirm Password</label>
-                        <input name="confirmPassword" type="password" class="form-control" id="exampleFormControlInput1"
+                        <label for="exampleFormControlInput1" class="form-label">Password:</label>
+                        <input name="password" type="password" class="form-control" id="exampleFormControlInput1"
                             placeholder="Enter Password">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Confirm password</label>
+                        <input name="confirmPassword" type="password" class="form-control" id="exampleFormControlInput1"
+                            placeholder="Enter password to confirm change">
                     </div>
                     <button class="btn btn-primary" type="submit">Submit</button>
                 </form>

@@ -1,14 +1,27 @@
 import type { Express } from "express";
-import { renderEditForm, renderUserList } from "../controllers/user.controller.js";
-// import { handleCreateUser, handleDeleteUser, handleEditUser, renderCreateUserForm, renderEditForm, renderUserList } from "../controllers/user.controller.js";
+import { handleGetUsers, renderUserList, renderCreateUserForm, handleGetUser, renderEditForm, handleCreateUser } from "../controllers/user.controller.js";
 
 const registerUserRoutes = (app: Express): void => {
-    app.get("/api/v1/users", renderUserList);
-    // app.get("/users/create", renderCreateUserForm);
-    // app.post("/api/v1/users", handleCreateUser);
+    // ==================== PAGE ROUTES ====================
+
+    app.get("/users", renderUserList);
+
+    app.get("/users/create", renderCreateUserForm);
+
     app.get("/users/edit/:id", renderEditForm);
-    // app.post("/users/edit/:id", handleEditUser);
-    // app.post("/users/:id", handleDeleteUser);
+
+
+    // ==================== API ROUTES ====================
+
+    app.get("/api/v1/users", handleGetUsers);
+
+    app.get("/api/v1/users/:id", handleGetUser);
+
+    app.post("/api/v1/users", handleCreateUser);
+
+    // app.patch("/api/v1/users/:id", handleUpdateUser);
+
+    // app.delete("/api/v1/users/:id", handleDeleteUser);
 };
 
 export { registerUserRoutes };
