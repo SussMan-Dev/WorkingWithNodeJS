@@ -1,6 +1,6 @@
 // import { create, edit, getAllUsers, getUserForEdit, remove, searchUser } from "../services/user.service.js"
 import { type Request, type Response } from "express";
-import { create, edit, findUser, getAllUsers, getUser, searchUser } from "../services/user.service.js";
+import { create, edit, findUser, getAllUsers, getUser, remove, searchUser } from "../services/user.service.js";
 import { log } from "console";
 
 //Render UI
@@ -133,4 +133,18 @@ const handleEditUser = async (req: Request, res: Response) => {
     }
 };
 
-export { renderUserList, renderCreateUserForm, handleEditUser, handleGetUsers, handleGetUser, handleCreateUser, renderEditForm }
+const handleDeleteUser = async (req: Request, res: Response) => {
+    try {
+        const id = Number(req.params.id);
+
+        await remove(id);
+
+        return res.status(204).send();
+    } catch (err) {
+        return res.status(500).json({
+            error: "Unable to delete user. Please try again.",
+        });
+    }
+};
+
+export { renderUserList, renderCreateUserForm, handleEditUser, handleGetUsers, handleGetUser, handleCreateUser, renderEditForm, handleDeleteUser }

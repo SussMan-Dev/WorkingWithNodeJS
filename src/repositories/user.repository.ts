@@ -95,4 +95,4 @@ const searchUserByUserName = async (keyword: string) => {
     }));
 };
 // , createUser, findUser, updateUser, deleteById, searchUserByUserName
-export { findAllUsers, searchUserByUserName, findUser, updateUser, createUser };
+export { findAllUsers, searchUserByUserName, findUser, updateUser, createUser, deleteById };
