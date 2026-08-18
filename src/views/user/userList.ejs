@@ -94,7 +94,8 @@
                                 <td>
                                     <div class="d-flex justify-content-center gap-2">
 
-                                        <a href="/users/edit/<%= user.userId %>" class="btn btn-warning btn-sm">
+                                        <a href="/users/edit/<%= user.userId %>"
+                                            class="btn btn-warning btn-sm edit-user">
                                             Edit
                                         </a>
 
@@ -128,7 +129,7 @@
             });
 
             if (!response.ok) {
-                alert("Xóa user thất bại");
+                alert("Unable to delete user");
                 return;
             }
 

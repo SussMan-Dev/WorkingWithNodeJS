@@ -13,36 +13,66 @@
 <body>
     <div class="container p-5">
         <h1 class="text-center">Editing User</h1>
-        <% if (typeof error !=="undefined" && error) { %>
-            <div class="alert alert-danger" role="alert">
-                <%= error %>
+        <div id="error-message" class="alert alert-danger" role="alert" style="display: none;"></div>
+        <form action="/api/v1/users/<%= user.userId %>" id="edit-user-form" data-id="<%= user.userId %>">
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">UserName</label>
+                <input name="username" type="text" class="form-control" id="username" placeholder="Enter New Username"
+                    value="<%= user.username %>">
             </div>
-            <% } %>
-                <form action="/api/v1/users/<%= user.userId %>" method="post" id="userForm">
-                    <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">UserName</label>
-                        <input name="username" type="text" class="form-control" id="exampleFormControlInput1"
-                            placeholder="Enter New Username" value="<%= user.username %>">
-                    </div>
-                    <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Your birthday</label>
-                        <input name="dateOfBirth" type="datetime" class="form-control" id="exampleFormControlInput1"
-                            placeholder="your birthday" value="<%= user.dateOfBirth %>">
-                    </div>
-                    <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Password</label>
-                        <input name="password" type="password" class="form-control" id="exampleFormControlInput1"
-                            value="<%= user.password %>" placeholder="Enter your password">
-                    </div>
-                    <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Confirm Password</label>
-                        <input name="confirmPassword" type="password" class="form-control" id="exampleFormControlInput1"
-                            placeholder="Enter your new password">
-                    </div>
-                    <a href="/users" class="btn btn-primary">Back</a>
-                    <button class="btn btn-primary" type="submit">Submit</button>
-                </form>
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Birthday</label>
+                <input name="dateOfBirth" type="date" class="form-control" id="dateOfBirth" placeholder="your birthday"
+                    value="<%= user.dateOfBirth %>">
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">New Password</label>
+                <input name="password" type="password" class="form-control" id="password" value="<%= user.password %>"
+                    placeholder="Enter your password">
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Confirm New Password</label>
+                <input name="confirmPassword" type="password" class="form-control" id="confirmPassword"
+                    placeholder="Enter your new password">
+            </div>
+            <a href="/users" class="btn btn-primary">Back</a>
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </form>
     </div>
 </body>
+<script>
+    const editUser = document.querySelector("#edit-user-form");
+
+    editUser.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const data = {
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value,
+            dateOfBirth: document.getElementById("dateOfBirth").value,
+            confirmPassword: document.getElementById("confirmPassword").value
+        };
+
+        const id = editUser.dataset.id
+        const response = await fetch(`/api/v1/users/${id}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+
+        if (!response.ok) {
+            const result = await response.json();
+            document.querySelector("#error-message").textContent = result.error;
+            document.querySelector("#error-message").style.display = "block";
+
+            return;
+        }
+
+        window.location.href = "/users";
+    });
+</script>
 
 </html>

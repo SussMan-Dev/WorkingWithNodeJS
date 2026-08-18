@@ -1,7 +1,7 @@
 // import { create, edit, getAllUsers, getUserForEdit, remove, searchUser } from "../services/user.service.js"
 import { type Request, type Response } from "express";
-import { create, edit, findUser, getAllUsers, getUser, remove, searchUser } from "../services/user.service.js";
-import { log } from "console";
+import { create, findUser, getAllUsers, getUser, remove, searchUser, update } from "../services/user.service.js";
+import { error, log } from "console";
 
 //Render UI
 const renderUserList = async (req: Request, res: Response): Promise<void> => {
@@ -65,19 +65,19 @@ const handleGetUser = async (req: Request, res: Response) => {
 const handleCreateUser = async (req: Request, res: Response) => {
     const { username, password, dateOfBirth, confirmPassword } = req.body;
     const birthDate = new Date(dateOfBirth);
-
-    if (Number.isNaN(birthDate.getTime())) {
-        return res.status(400).render("user/create", {
-            error: "Ngày sinh không hợp lệ",
-            username,
-        });
-    }
     if (!username || !dateOfBirth || !password || !confirmPassword) {
         return res.status(400).render("user/create", {
             error: "Please enter all required information",
             username,
         });
     }
+    if (Number.isNaN(birthDate.getTime())) {
+        return res.status(400).render("user/create", {
+            error: "Your birthday is invalid",
+            username,
+        });
+    }
+
 
     if (password !== confirmPassword) {
         return res.status(400).render("user/create", {
@@ -99,40 +99,6 @@ const handleCreateUser = async (req: Request, res: Response) => {
     }
 };
 
-const handleEditUser = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
-    const user = await getUser(id);
-    const { username, password, confirmPassword } = req.body;
-    //validate
-    if (Number.isNaN(id)) {
-        return res.status(400).send("Invalid user ID");
-    }
-
-    if (!username || !password || !confirmPassword) {
-        return res.status(400).render("user/edit", {
-            error: "Please enter all required information",
-            user
-        });
-    }
-
-    if (password !== confirmPassword) {
-        return res.status(400).render("user/edit", {
-            error: "Confirm password must match password",
-            user,
-        });
-    }
-
-    try {
-        await edit(id, username.trim(), password);
-        return res.redirect("/users");
-    } catch (error) {
-        res.status(500).render("user/edit", {
-            error: "Unable to edit user. Please try again.",
-            user,
-        });
-    }
-};
-
 const handleDeleteUser = async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id);
@@ -147,4 +113,30 @@ const handleDeleteUser = async (req: Request, res: Response) => {
     }
 };
 
-export { renderUserList, renderCreateUserForm, handleEditUser, handleGetUsers, handleGetUser, handleCreateUser, renderEditForm, handleDeleteUser }
+const handleUpdateUser = async (req: Request, res: Response) => {
+    const { username, dateOfBirth, password, confirmPassword } = req.body
+    if (!username.trim() || !dateOfBirth || !password || !confirmPassword) {
+        return res.status(400).json({
+            error: "Please enter all required information"
+        });
+    }
+    if (password !== confirmPassword) {
+        return res.status(400).json({
+            error: "Password and confirm password must be the same"
+        });
+    }
+    try {
+        const birthDate = new Date(dateOfBirth);
+        const id = Number(req.params.id)
+        await update(id, username, password, birthDate)
+        return res.status(200).json({
+            error: "User updated successfully"
+        });
+    }
+    catch (err) {
+        return res.status(500).json({
+            error: "Internal Server Error"
+        });
+    }
+}
+export { renderUserList, renderCreateUserForm, handleGetUsers, handleGetUser, handleCreateUser, renderEditForm, handleDeleteUser, handleUpdateUser }

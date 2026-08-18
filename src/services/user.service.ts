@@ -13,17 +13,18 @@ const create = async (username: string, password: string, dateOfBirth: Date) => 
     return await createUser(username, password, dateOfBirth)
 }
 
-const edit = async (id: number, username: string, password: string) => {
-    return await updateUser(id, username, password)
-}
 
 const searchUser = async (username: string) => {
     const users = await searchUserByUserName(username)
     return users
 }
 
+const update = async (id: number, username: string, password: string, dateOfBirth: Date) => {
+    return await updateUser(id, username, password, dateOfBirth)
+}
+
 const remove = async (id: number) => {
     return await deleteById(id)
 }
 // , create, getUserForEdit, edit, remove, searchUser
-export { getAllUsers, searchUser, findUser, getUser, create, edit, remove };
+export { getAllUsers, searchUser, findUser, getUser, create, remove, update };
