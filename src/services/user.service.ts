@@ -5,26 +5,25 @@ const getAllUsers = () => {
     return findAllUsers();
 };
 
-const getUser = async (id: number) => {
-    return await findUser(id)
+const getUser = (id: number) => {
+    return findUser(id)
 }
 
-const create = async (username: string, password: string, dateOfBirth: Date) => {
-    return await createUser(username, password, dateOfBirth)
+const create = (username: string, password: string, dateOfBirth: Date) => {
+    return createUser(username, password, dateOfBirth)
 }
 
 
-const searchUser = async (username: string) => {
-    const users = await searchUserByUserName(username)
-    return users
+const searchUser = (username: string) => {
+    return searchUserByUserName(username)
 }
 
-const update = async (id: number, username: string, password: string, dateOfBirth: Date) => {
-    return await updateUser(id, username, password, dateOfBirth)
+const update = (id: number, username: string, password: string, dateOfBirth: Date) => {
+    return updateUser(id, username, password, dateOfBirth)
 }
 
-const remove = async (id: number) => {
-    return await deleteById(id)
+const remove = (id: number) => {
+    return deleteById(id)
 }
 // , create, getUserForEdit, edit, remove, searchUser
 export { getAllUsers, searchUser, findUser, getUser, create, remove, update };

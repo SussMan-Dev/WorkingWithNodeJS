@@ -1,7 +1,6 @@
 // import { create, edit, getAllUsers, getUserForEdit, remove, searchUser } from "../services/user.service.js"
 import { type Request, type Response } from "express";
 import { create, findUser, getAllUsers, getUser, remove, searchUser, update } from "../services/user.service.js";
-import { error, log } from "console";
 
 //Render UI
 const renderUserList = async (req: Request, res: Response): Promise<void> => {
@@ -69,12 +68,17 @@ const handleCreateUser = async (req: Request, res: Response) => {
         return res.status(400).render("user/create", {
             error: "Please enter all required information",
             username,
+            password,
+            dateOfBirth,
+            confirmPassword
         });
     }
     if (Number.isNaN(birthDate.getTime())) {
         return res.status(400).render("user/create", {
             error: "Your birthday is invalid",
             username,
+            password,
+            confirmPassword
         });
     }
 
@@ -83,9 +87,9 @@ const handleCreateUser = async (req: Request, res: Response) => {
         return res.status(400).render("user/create", {
             error: "Password and confirm password must be same",
             username,
+            dateOfBirth,
         });
     }
-    console.log(req.body);
     try {
         await create(username.trim(), password, birthDate);
         return res.redirect("/users");

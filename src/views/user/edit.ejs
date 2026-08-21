@@ -14,7 +14,7 @@
     <div class="container p-5">
         <h1 class="text-center">Editing User</h1>
         <div id="error-message" class="alert alert-danger" role="alert" style="display: none;"></div>
-        <form action="/api/v1/users/<%= user.userId %>" id="edit-user-form" data-id="<%= user.userId %>">
+        <form id="edit-user-form" data-id="<%= user.userId %>">
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">UserName</label>
                 <input name="username" type="text" class="form-control" id="username" placeholder="Enter New Username"
@@ -27,13 +27,13 @@
             </div>
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">New Password</label>
-                <input name="password" type="password" class="form-control" id="password" value="<%= user.password %>"
-                    placeholder="Enter your password">
+                <input name="password" type="password" class="form-control" id="password"
+                    placeholder="Enter your new password">
             </div>
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Confirm New Password</label>
                 <input name="confirmPassword" type="password" class="form-control" id="confirmPassword"
-                    placeholder="Enter your new password">
+                    placeholder="Enter again your new password">
             </div>
             <a href="/users" class="btn btn-primary">Back</a>
             <button class="btn btn-primary" type="submit">Submit</button>

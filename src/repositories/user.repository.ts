@@ -31,7 +31,7 @@ const findUser = async (id: number) => {
     });
 
     return {
-        ...user,
+        user,
         dateOfBirth: user.dateOfBirth
             ? user.dateOfBirth.toISOString().split("T")[0]
             : null,
@@ -83,7 +83,7 @@ const searchUserByUserName = async (keyword: string) => {
         },
         where: {
             username: {
-                contains: keyword,
+                contains: keyword.trim(),
             },
         },
     });
