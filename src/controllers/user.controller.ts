@@ -1,4 +1,3 @@
-// import { create, edit, getAllUsers, getUserForEdit, remove, searchUser } from "../services/user.service.js"
 import { type Request, type Response } from "express";
 import { create, findUser, getAllUsers, getUser, remove, searchUser, update } from "../services/user.service.js";
 
@@ -17,7 +16,7 @@ const renderUserList = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-const renderCreateUserForm = (req: Request, res: Response) => {
+const renderCreateUserForm = (_req: Request, res: Response) => {
     try {
         res.status(200).render("user/create")
     }
@@ -38,7 +37,7 @@ const renderEditForm = async (req: Request, res: Response) => {
 }
 
 // Logic
-const handleGetUsers = async (req: Request, res: Response) => {
+const handleGetUsers = async (_req: Request, res: Response) => {
     try {
         const users = await getAllUsers()
         res.status(200).send(users)
@@ -77,8 +76,6 @@ const handleCreateUser = async (req: Request, res: Response) => {
         return res.status(400).render("user/create", {
             error: "Your birthday is invalid",
             username,
-            password,
-            confirmPassword
         });
     }
 
@@ -87,15 +84,12 @@ const handleCreateUser = async (req: Request, res: Response) => {
         return res.status(400).render("user/create", {
             error: "Password and confirm password must be same",
             username,
-            dateOfBirth,
         });
     }
     try {
         await create(username.trim(), password, birthDate);
         return res.redirect("/users");
-    } catch {
-
-
+    } catch (error) {
         return res.status(500).render("user/create", {
             error: "Unable to create user. Username may already exist.",
             username,
