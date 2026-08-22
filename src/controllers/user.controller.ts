@@ -1,5 +1,6 @@
 import { type Request, type Response } from "express";
 import { create, findUser, getAllUsers, getUser, remove, searchUser, update } from "../services/user.service.js";
+import { log } from "console";
 
 //Render UI
 const renderUserList = async (req: Request, res: Response): Promise<void> => {
