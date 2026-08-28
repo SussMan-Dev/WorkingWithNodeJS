@@ -1,4 +1,5 @@
 import * as argon2 from "argon2";
+import { validateUser } from "../repositories/auth.repository.js";
 const hashPassword = async (plainPassword: string): Promise<string> => {
     return argon2.hash(plainPassword, {
         // config argon2id attribute
@@ -8,7 +9,7 @@ const hashPassword = async (plainPassword: string): Promise<string> => {
         parallelism: 4,
     })
 }
-const verifyPassword = async (hashedPassword: string, plainPassword: string): Promise<boolean> => {
-    return argon2.verify(hashedPassword, plainPassword)
+const verifyUser = async (username: string, password: string): Promise<boolean> => {
+    return await validateUser(username, password)
 }
-export { hashPassword, verifyPassword }
+export { hashPassword, verifyUser }
