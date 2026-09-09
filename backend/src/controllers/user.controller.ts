@@ -13,6 +13,7 @@ const renderUserList = async (req: Request, res: Response): Promise<void> => {
         });
     }
     catch (error) {
+        console.error("Unable to render user list:", error);
         res.status(500).send("Internal Server Error");
     }
 };

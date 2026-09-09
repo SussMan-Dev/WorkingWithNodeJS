@@ -3,7 +3,7 @@
     "framework": "express",
     "functions": {
         "src/app.ts": {
-            "includeFiles": "src/views/**"
+            "includeFiles": "views/**/*"
         }
     }
 }
