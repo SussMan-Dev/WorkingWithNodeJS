@@ -1,6 +1,9 @@
 import express from 'express';
 import dotenv from "dotenv";
+import { existsSync } from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import type { NextFunction, Request, Response } from 'express';
 import { registerUserRoutes } from './routes/user.route.js';
 import { registerAuthRoute } from './routes/auth.route.js'
 
@@ -8,13 +11,22 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Resolve runtime assets from the project root. Keeping views outside `src`
-// ensures they are available both from compiled `dist` code and on Vercel.
-const projectRoot = process.cwd();
+// Vercel may use a different working directory at runtime. Resolve views from
+// both the module location and the working directory so source and dist builds
+// behave consistently.
+const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
+const packageRoot = path.resolve(moduleDirectory, "..");
+const viewCandidates = [
+    path.join(packageRoot, "views"),
+    path.join(process.cwd(), "views"),
+];
+const viewsDirectory = viewCandidates.find((directory) =>
+    existsSync(path.join(directory, "home.ejs"))
+) ?? viewCandidates[0];
 
 //SET VIEW ENGINE TO YOUR APP
 app.set("view engine", "ejs")
-app.set("views", path.join(projectRoot, "views"));
+app.set("views", viewsDirectory);
 
 //ALLOW READING DATA FROM FORM AND HANDLE JSON REQUEST
 app.use(express.urlencoded({ extended: true }));
@@ -22,7 +34,7 @@ app.use(express.json())
 
 
 //IMPORT STATIC FILE IMAGES/CSS/JS
-app.use(express.static(path.join(projectRoot, "public")));
+app.use(express.static(path.join(packageRoot, "public")));
 
 //ROUTE DECLARATION
 // Used by Railway to verify that the application started successfully.
@@ -35,6 +47,11 @@ app.get('/', (_req, res) => {
 });
 registerUserRoutes(app)
 registerAuthRoute(app)
+
+app.use((error: unknown, req: Request, res: Response, _next: NextFunction) => {
+    console.error(`Unhandled error for ${req.method} ${req.originalUrl}:`, error);
+    res.status(500).send("Internal Server Error");
+});
 
 // Vercel invokes the exported Express application as a function. Keep the
 // listener only for local development and traditional Node deployments.
