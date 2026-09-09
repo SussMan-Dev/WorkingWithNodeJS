@@ -1,7 +1,7 @@
 import { type Request, type Response } from "express";
 import { verifyUser } from "../services/password.service.js";
 import { create } from "../services/user.service.js";
-import { error } from "console";
+import { isUniqueConstraintError } from "../utils/prisma-error.js";
 
 const getRegisterForm = (req: Request, res: Response) => {
     res.status(200).render("auth/register")
@@ -23,22 +23,35 @@ const handleLogin = async (req: Request, res: Response) => {
 
 const handleRegister = async (req: Request, res: Response) => {
     const { username, dateOfBirth, password, confirmPassword } = req.body
+    const normalizedUsername = typeof username === "string" ? username.trim() : "";
     const birthDate = new Date(dateOfBirth)
-    if (!username.trim() || !birthDate || !password || !confirmPassword) {
-        return res.status(200).render("auth/register", {
-            error: "must enter all required infomation"
+    if (!normalizedUsername || !dateOfBirth || Number.isNaN(birthDate.getTime()) || !password || !confirmPassword) {
+        return res.status(400).render("auth/register", {
+            error: "Must enter valid information in all required fields",
+            username: normalizedUsername,
+            dateOfBirth,
         })
     }
     if (password !== confirmPassword) {
-        return res.status(200).render("auth/register", {
-            error: "password must be the same with confirm password"
+        return res.status(400).render("auth/register", {
+            error: "Password and confirm password must be the same",
+            username: normalizedUsername,
+            dateOfBirth,
         })
     }
 
     try {
-        await create(username.trim(), password, birthDate)
+        await create(normalizedUsername, password, birthDate)
         return res.redirect("/auth/login")
     } catch (error) {
+        if (isUniqueConstraintError(error)) {
+            return res.status(409).render("auth/register", {
+                error: "Username already exists",
+                username: normalizedUsername,
+                dateOfBirth,
+            });
+        }
+
         console.error("Register failed:", error)
         return res.status(500).json("Unable to create user")
     }

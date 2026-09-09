@@ -1,5 +1,6 @@
 import { type Request, type Response } from "express";
 import { create, findUser, getAllUsers, getUser, remove, searchUser, update } from "../services/user.service.js";
+import { isUniqueConstraintError } from "../utils/prisma-error.js";
 
 //Render UI
 const renderUserList = async (req: Request, res: Response): Promise<void> => {
@@ -90,8 +91,16 @@ const handleCreateUser = async (req: Request, res: Response) => {
         await create(username.trim(), password, birthDate);
         return res.redirect("/users");
     } catch (error) {
+        if (isUniqueConstraintError(error)) {
+            return res.status(409).render("user/create", {
+                error: "Username already exists",
+                username,
+                dateOfBirth,
+            });
+        }
+
         return res.status(500).render("user/create", {
-            error: "Unable to create user. Username may already exist.",
+            error: "Unable to create user",
             username,
         });
     }
@@ -131,7 +140,13 @@ const handleUpdateUser = async (req: Request, res: Response) => {
             error: "User updated successfully"
         });
     }
-    catch (err) {
+    catch (error) {
+        if (isUniqueConstraintError(error)) {
+            return res.status(409).json({
+                error: "Username already exists"
+            });
+        }
+
         return res.status(500).json({
             error: "Internal Server Error"
         });
