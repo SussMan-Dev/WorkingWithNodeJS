@@ -35,8 +35,8 @@
             <form class="row g-2 align-items-center" method="GET" action="/users">
                 <div class="col-md">
                     <label for="keyword" class="visually-hidden">Search by username</label>
-                    <input type="search" class="form-control" id="keyword" name="keyword"
-                        placeholder="Search username" value="<%= keyword || '' %>">
+                    <input type="search" class="form-control" id="keyword" name="keyword" placeholder="Search username"
+                        value="<%= keyword || '' %>">
                 </div>
                 <div class="col-6 col-md-auto">
                     <button class="btn btn-primary w-100" type="submit">Search</button>
@@ -48,7 +48,7 @@
         </section>
 
         <section class="content-card table-card">
-            <% if (users.length > 0) { %>
+            <% if (users.length> 0) { %>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead>
@@ -67,13 +67,23 @@
                                     <td><span class="id-badge">#<%= user.userId %></span></td>
                                     <td>
                                         <div class="user-cell">
-                                            <span class="user-avatar"><%= user.username.charAt(0).toUpperCase() %></span>
-                                            <span><%= user.username %></span>
+                                            <span class="user-avatar">
+                                                <%= user.username.charAt(0).toUpperCase() %>
+                                            </span>
+                                            <span>
+                                                <%= user.username %>
+                                            </span>
                                         </div>
                                     </td>
-                                    <td><%= user.dateOfBirth || '—' %></td>
-                                    <td class="text-nowrap"><%= new Date(user.createdAt).toLocaleDateString('en-GB') %></td>
-                                    <td class="text-nowrap"><%= new Date(user.updatedAt).toLocaleDateString('en-GB') %></td>
+                                    <td>
+                                        <%= user.dateOfBirth || '—' %>
+                                    </td>
+                                    <td class="text-nowrap">
+                                        <%= new Date(user.createdAt).toLocaleDateString('en-GB') %>
+                                    </td>
+                                    <td class="text-nowrap">
+                                        <%= new Date(user.updatedAt).toLocaleDateString('en-GB') %>
+                                    </td>
                                     <td>
                                         <div class="d-flex justify-content-end gap-2">
                                             <a href="/users/edit/<%= user.userId %>"
@@ -85,16 +95,16 @@
                                         </div>
                                     </td>
                                 </tr>
-                            <% }); %>
+                                <% }); %>
                         </tbody>
                     </table>
                 </div>
-            <% } else { %>
-                <div class="empty-state">
-                    <strong>No users found</strong>
-                    <span>Try another search or create a new user.</span>
-                </div>
-            <% } %>
+                <% } else { %>
+                    <div class="empty-state">
+                        <strong>No users found</strong>
+                        <span>Try another search or create a new user.</span>
+                    </div>
+                    <% } %>
         </section>
     </main>
 
