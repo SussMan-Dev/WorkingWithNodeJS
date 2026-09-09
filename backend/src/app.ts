@@ -22,7 +22,7 @@ app.use(express.json())
 
 
 //IMPORT STATIC FILE IMAGES/CSS/JS
-app.use(express.static(path.join(projectRoot, "src", "public")));
+app.use(express.static(path.join(projectRoot, "public")));
 
 //ROUTE DECLARATION
 // Used by Railway to verify that the application started successfully.
