@@ -24,11 +24,11 @@
     <main class="container page-shell">
         <header class="page-heading d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
             <div>
-                <p class="eyebrow">User management</p>
-                <h1 class="page-title">All users</h1>
-                <p class="page-subtitle">Search, edit, or create accounts from one place.</p>
+                <p class="eyebrow">Directory</p>
+                <h1 class="page-title">Users</h1>
+                <p class="page-subtitle">Find an account or keep its details up to date.</p>
             </div>
-            <a class="btn btn-primary" href="/users/create">+ Create user</a>
+            <a class="btn btn-primary" href="/users/create">Add user</a>
         </header>
 
         <section class="search-card mb-4">
@@ -36,7 +36,7 @@
                 <div class="col-md">
                     <label for="keyword" class="visually-hidden">Search by username</label>
                     <input type="search" class="form-control" id="keyword" name="keyword"
-                        placeholder="Search by username..." value="<%= keyword || '' %>">
+                        placeholder="Search username" value="<%= keyword || '' %>">
                 </div>
                 <div class="col-6 col-md-auto">
                     <button class="btn btn-primary w-100" type="submit">Search</button>

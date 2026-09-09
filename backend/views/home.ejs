@@ -17,39 +17,59 @@
                 <span class="brand-mark">U</span>
                 <span>UserHub</span>
             </a>
-            <div class="d-flex gap-2">
-                <a class="btn btn-sm btn-outline-primary" href="/auth/login">Log in</a>
-                <a class="btn btn-sm btn-primary" href="/auth/register">Create account</a>
+            <div class="nav-actions">
+                <a class="nav-link-simple" href="/users">View users</a>
+                <a class="btn btn-sm btn-outline-primary" href="/auth/login">Sign in</a>
             </div>
         </div>
     </nav>
 
     <main class="hero">
-        <div class="container text-center">
-            <p class="eyebrow">Simple user management</p>
-            <h1 class="hero-title">Manage your users with <span>less effort.</span></h1>
-            <p class="hero-copy">
-                A clean and lightweight place to create accounts, find users, and keep profile information up to date.
-            </p>
-            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
-                <a class="btn btn-primary px-4" href="/users">Open user list</a>
-                <a class="btn btn-outline-primary px-4" href="/auth/register">Get started</a>
-            </div>
+        <div class="container hero-layout">
+            <section>
+                <p class="eyebrow">User directory</p>
+                <h1 class="hero-title">Keep your user records tidy.</h1>
+                <p class="hero-copy">
+                    Add accounts, update details, and find the person you need without digging through complicated menus.
+                </p>
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                    <a class="btn btn-primary px-4" href="/users">Browse users</a>
+                    <a class="btn btn-outline-primary px-4" href="/users/create">Add a user</a>
+                </div>
+                <p class="hero-note">A small workspace for everyday account management.</p>
+            </section>
 
-            <div class="feature-strip text-start">
-                <div class="feature-item">
-                    <strong>Easy to use</strong>
-                    <span>A focused interface without unnecessary steps.</span>
+            <aside class="home-panel" aria-label="Quick actions">
+                <div class="home-panel-header">
+                    <span>Quick actions</span>
+                    <span class="status-label">Ready</span>
                 </div>
-                <div class="feature-item">
-                    <strong>Quick search</strong>
-                    <span>Find the account you need in seconds.</span>
-                </div>
-                <div class="feature-item">
-                    <strong>Simple editing</strong>
-                    <span>Keep user details accurate and current.</span>
-                </div>
-            </div>
+                <a class="home-action" href="/users">
+                    <span class="home-action-number">01</span>
+                    <span>
+                        <strong>Open the directory</strong>
+                        <small>View and search all accounts</small>
+                    </span>
+                    <span class="home-action-arrow" aria-hidden="true">→</span>
+                </a>
+                <a class="home-action" href="/users/create">
+                    <span class="home-action-number">02</span>
+                    <span>
+                        <strong>Add a new user</strong>
+                        <small>Create an account record</small>
+                    </span>
+                    <span class="home-action-arrow" aria-hidden="true">→</span>
+                </a>
+                <a class="home-action" href="/auth/login">
+                    <span class="home-action-number">03</span>
+                    <span>
+                        <strong>Sign in</strong>
+                        <small>Continue with an existing account</small>
+                    </span>
+                    <span class="home-action-arrow" aria-hidden="true">→</span>
+                </a>
+                <div class="home-panel-footer">Simple tools, all in one place.</div>
+            </aside>
         </div>
     </main>
 
