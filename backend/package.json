@@ -4,9 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "node --loader ts-node/esm ./src/app.ts",
     "dev": "nodemon",
-    "build": "tsc"
+    "build": "prisma generate && tsc",
+    "start": "node dist/app.js"
   },
   "nodemonConfig": {
     "watch": [
