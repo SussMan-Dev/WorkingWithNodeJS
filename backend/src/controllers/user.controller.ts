@@ -7,7 +7,7 @@ const renderUserList = async (req: Request, res: Response): Promise<void> => {
     const keyword = req.query.keyword as string;
     try {
         let users = keyword ? await searchUser(keyword) : await getAllUsers();
-        res.render("user/userList.ejs", {
+        res.render("user/userList", {
             users,
             keyword,
         });

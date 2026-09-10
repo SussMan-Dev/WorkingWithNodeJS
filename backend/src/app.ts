@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import type { NextFunction, Request, Response } from 'express';
 import { registerUserRoutes } from './routes/user.route.js';
 import { registerAuthRoute } from './routes/auth.route.js'
+import { registerProductRoute } from './routes/product.route.js';
 
 dotenv.config();
 const app = express();
@@ -47,6 +48,7 @@ app.get('/', (_req, res) => {
 });
 registerUserRoutes(app)
 registerAuthRoute(app)
+// registerProductRoute(app)
 
 app.use((error: unknown, req: Request, res: Response, _next: NextFunction) => {
     console.error(`Unhandled error for ${req.method} ${req.originalUrl}:`, error);
