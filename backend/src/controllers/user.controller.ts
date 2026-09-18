@@ -1,13 +1,20 @@
 import { type Request, type Response } from "express";
-import { create, findUser, getAllUsers, getUser, remove, searchUser, update } from "../services/user.service.js";
+import {
+    createUser,
+    deleteUser,
+    getUserById,
+    getUsers,
+    searchUsersByUsername,
+    updateUser,
+} from "../services/user.service.js";
 import { isUniqueConstraintError } from "../utils/prisma-error.js";
 
 //Render UI
 const renderUserList = async (req: Request, res: Response): Promise<void> => {
     const keyword = req.query.keyword as string;
     try {
-        let users = keyword ? await searchUser(keyword) : await getAllUsers();
-        res.render("user/userList", {
+        const users = keyword ? await searchUsersByUsername(keyword) : await getUsers();
+        res.render("admin/user/userList", {
             users,
             keyword,
         });
@@ -20,18 +27,18 @@ const renderUserList = async (req: Request, res: Response): Promise<void> => {
 
 const renderCreateUserForm = (_req: Request, res: Response) => {
     try {
-        res.status(200).render("user/create")
+        res.status(200).render("admin/user/create")
     }
     catch {
         res.status(500).json("Internal Server Error")
     }
 }
 
-const renderEditForm = async (req: Request, res: Response) => {
+const renderEditUserForm = async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id)
-        const user = await getUser(id)
-        res.status(200).render("user/edit", { user })
+        const user = await getUserById(id)
+        res.status(200).render("admin/user/edit", { user })
     }
     catch {
         res.status(500).json("Internal Server Error")
@@ -41,7 +48,7 @@ const renderEditForm = async (req: Request, res: Response) => {
 // Logic
 const handleGetUsers = async (_req: Request, res: Response) => {
     try {
-        const users = await getAllUsers()
+        const users = await getUsers()
         res.status(200).send(users)
     }
     catch {
@@ -53,7 +60,7 @@ const handleGetUsers = async (_req: Request, res: Response) => {
 const handleGetUser = async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id)
-        const user = await findUser(id)
+        const user = await getUserById(id)
         res.status(200).send(user)
     }
     catch {
@@ -63,10 +70,11 @@ const handleGetUser = async (req: Request, res: Response) => {
 }
 
 const handleCreateUser = async (req: Request, res: Response) => {
+
     const { username, password, dateOfBirth, confirmPassword } = req.body;
     const birthDate = new Date(dateOfBirth);
     if (!username || !dateOfBirth || !password || !confirmPassword) {
-        return res.status(400).render("user/create", {
+        return res.status(400).render("admin/user/create", {
             error: "Please enter all required information",
             username,
             password,
@@ -75,7 +83,7 @@ const handleCreateUser = async (req: Request, res: Response) => {
         });
     }
     if (Number.isNaN(birthDate.getTime())) {
-        return res.status(400).render("user/create", {
+        return res.status(400).render("admin/user/create", {
             error: "Your birthday is invalid",
             username,
         });
@@ -83,24 +91,24 @@ const handleCreateUser = async (req: Request, res: Response) => {
 
 
     if (password !== confirmPassword) {
-        return res.status(400).render("user/create", {
+        return res.status(400).render("admin/user/create", {
             error: "Password and confirm password must be same",
             username,
         });
     }
     try {
-        await create(username.trim(), password, birthDate);
+        await createUser(username.trim(), password, birthDate);
         return res.redirect("/users");
     } catch (error) {
         if (isUniqueConstraintError(error)) {
-            return res.status(409).render("user/create", {
+            return res.status(409).render("admin/user/create", {
                 error: "Username already exists",
                 username,
                 dateOfBirth,
             });
         }
 
-        return res.status(500).render("user/create", {
+        return res.status(500).render("admin/user/create", {
             error: "Unable to create user",
             username,
         });
@@ -111,7 +119,7 @@ const handleDeleteUser = async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id);
 
-        await remove(id);
+        await deleteUser(id);
 
         return res.status(204).send();
     } catch (err) {
@@ -136,7 +144,7 @@ const handleUpdateUser = async (req: Request, res: Response) => {
     try {
         const birthDate = new Date(dateOfBirth);
         const id = Number(req.params.id)
-        await update(id, username, password, birthDate)
+        await updateUser(id, username, password, birthDate)
         return res.status(200).json({
             error: "User updated successfully"
         });
@@ -153,4 +161,13 @@ const handleUpdateUser = async (req: Request, res: Response) => {
         });
     }
 }
-export { renderUserList, renderCreateUserForm, handleGetUsers, handleGetUser, handleCreateUser, renderEditForm, handleDeleteUser, handleUpdateUser }
+export {
+    renderUserList,
+    renderCreateUserForm,
+    handleGetUsers,
+    handleGetUser,
+    handleCreateUser,
+    renderEditUserForm,
+    handleDeleteUser,
+    handleUpdateUser,
+}

@@ -1,7 +1,7 @@
 import argon2 from "argon2";
 import prisma from "../config/db.js";
 
-const validateUser = async (usernameInput: string, passwordInput: string): Promise<boolean> => {
+const verifyUserCredentials = async (usernameInput: string, passwordInput: string): Promise<boolean> => {
     const user = await prisma.user.findFirst({
         where: {
             username: usernameInput
@@ -14,4 +14,4 @@ const validateUser = async (usernameInput: string, passwordInput: string): Promi
 
     return await argon2.verify(user.password, passwordInput);
 };
-export { validateUser }
+export { verifyUserCredentials }

@@ -18,7 +18,7 @@ const findAllUsers = async () => {
     }))
 };
 
-const findUser = async (id: number) => {
+const findUserById = async (id: number) => {
     const user = await prisma.user.findUniqueOrThrow({
         where: { userId: id },
         select: {
@@ -38,18 +38,18 @@ const findUser = async (id: number) => {
     };
 }
 
-const createUser = async (username: string, password: string, dateOfBirth: Date) => {
+const insertUser = async (username: string, password: string, dateOfBirth: Date) => {
     const newUser = await prisma.user.create({
         data: {
             username: username,
             password: password,
-            dateOfBirth: dateOfBirth
+            dateOfBirth: dateOfBirth,
         }
     })
     return newUser;
 }
 
-const updateUser = async (id: number, username: string, password: string, dateOfBirth: Date) => {
+const updateUserById = async (id: number, username: string, password: string, dateOfBirth: Date) => {
     const updatedUser = await prisma.user.update(
         {
             where: {
@@ -65,14 +65,14 @@ const updateUser = async (id: number, username: string, password: string, dateOf
     return updatedUser
 }
 
-const deleteById = async (id: number) => {
+const deleteUserById = async (id: number) => {
     const deletedUser = await prisma.user.delete({
         where: { userId: id }
     })
     return deletedUser
 }
 
-const searchUserByUserName = async (keyword: string) => {
+const findUsersByUsername = async (keyword: string) => {
     const users = await prisma.user.findMany({
         select: {
             userId: true,
@@ -95,5 +95,11 @@ const searchUserByUserName = async (keyword: string) => {
             : null,
     }));
 };
-// , createUser, findUser, updateUser, deleteById, searchUserByUserName
-export { findAllUsers, searchUserByUserName, findUser, updateUser, createUser, deleteById };
+export {
+    findAllUsers,
+    findUsersByUsername,
+    findUserById,
+    updateUserById,
+    insertUser,
+    deleteUserById,
+};

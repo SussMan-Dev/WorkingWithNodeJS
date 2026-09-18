@@ -12,18 +12,33 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Vercel may use a different working directory at runtime. Resolve views from
-// both the module location and the working directory so source and dist builds
-// behave consistently.
+// Directory containing the currently executing module.
+// During development, this is typically E:\WorkingWithNodejs\backend\src.
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
+
+// Parent directory of the current module directory.
+// During development, this is typically E:\WorkingWithNodejs\backend.
 const packageRoot = path.resolve(moduleDirectory, "..");
+
+// Possible locations of the views directory:
+// 1. Inside the package root: backend/views
+// 2. Inside the directory where the Node.js process was started: <cwd>/views
 const viewCandidates = [
     path.join(packageRoot, "views"),
     path.join(process.cwd(), "views"),
 ];
-const viewsDirectory = viewCandidates.find((directory) =>
-    existsSync(path.join(directory, "home.ejs"))
-) ?? viewCandidates[0];
+
+// Use the first candidate containing home.ejs.
+// If none contains it, fall back to backend/views.
+const viewsDirectory =
+    viewCandidates.find((directory) =>
+        existsSync(path.join(directory, "home.ejs"))
+    ) ?? viewCandidates[0];
+
+console.log(`moduleDirectory : ${moduleDirectory}`);
+console.log(`packageRoot : ${packageRoot}`);
+console.log(`viewCandidates : ${viewCandidates}`);
+console.log(`viewsDirectory : ${viewsDirectory}`);
 
 //SET VIEW ENGINE TO YOUR APP
 app.set("view engine", "ejs")
@@ -48,7 +63,7 @@ app.get('/', (_req, res) => {
 });
 registerUserRoutes(app)
 registerAuthRoute(app)
-// registerProductRoute(app)
+registerProductRoute(app)
 
 app.use((error: unknown, req: Request, res: Response, _next: NextFunction) => {
     console.error(`Unhandled error for ${req.method} ${req.originalUrl}:`, error);

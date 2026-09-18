@@ -1,5 +1,5 @@
 import type { Express } from "express";
-import { handleGetUsers, renderUserList, renderCreateUserForm, handleGetUser, renderEditForm, handleCreateUser, handleDeleteUser, handleUpdateUser } from "../controllers/user.controller.js";
+import { handleGetUsers, renderUserList, renderCreateUserForm, handleGetUser, renderEditUserForm, handleCreateUser, handleDeleteUser, handleUpdateUser } from "../controllers/user.controller.js";
 
 const registerUserRoutes = (app: Express): void => {
     // ==================== PAGE ROUTES ====================
@@ -8,7 +8,7 @@ const registerUserRoutes = (app: Express): void => {
 
     app.get("/users/create", renderCreateUserForm);
 
-    app.get("/users/edit/:id", renderEditForm);
+    app.get("/users/edit/:id", renderEditUserForm);
 
 
     // ==================== API ROUTES ====================

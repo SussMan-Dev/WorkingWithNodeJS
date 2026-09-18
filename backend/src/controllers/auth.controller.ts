@@ -1,21 +1,22 @@
 import { type Request, type Response } from "express";
-import { verifyUser } from "../services/password.service.js";
-import { create } from "../services/user.service.js";
+import { authenticateUser } from "../services/password.service.js";
+import { createUser } from "../services/user.service.js";
 import { isUniqueConstraintError } from "../utils/prisma-error.js";
 
-const getRegisterForm = (req: Request, res: Response) => {
+const renderRegisterForm = (_req: Request, res: Response) => {
     res.status(200).render("auth/register")
 }
-const getLoginForm = (req: Request, res: Response) => {
+const renderLoginForm = (_req: Request, res: Response) => {
     res.status(200).render("auth/login")
 }
 
 const handleLogin = async (req: Request, res: Response) => {
+
     const { username, password } = req.body
     if (!username.trim() || !password) {
         res.status(400).json("Please enter all required information")
     }
-    const isValid = verifyUser(username, password)
+    const isValid = authenticateUser(username, password)
     if (await isValid) {
         res.redirect("/users")
     }
@@ -41,7 +42,7 @@ const handleRegister = async (req: Request, res: Response) => {
     }
 
     try {
-        await create(normalizedUsername, password, birthDate)
+        await createUser(normalizedUsername, password, birthDate)
         return res.redirect("/auth/login")
     } catch (error) {
         if (isUniqueConstraintError(error)) {
@@ -56,4 +57,4 @@ const handleRegister = async (req: Request, res: Response) => {
         return res.status(500).json("Unable to create user")
     }
 }
-export { getRegisterForm, getLoginForm, handleLogin, handleRegister }
+export { renderRegisterForm, renderLoginForm, handleLogin, handleRegister }

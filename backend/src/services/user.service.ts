@@ -1,34 +1,38 @@
-// import { createUser, deleteById, findAllUsers, findUser, searchUserByUserName, updateUser } from "../repositories/user.repository.js";
-import { createUser, deleteById, findAllUsers, findUser, searchUserByUserName, updateUser } from "../repositories/user.repository.js";
+import {
+    deleteUserById,
+    findAllUsers,
+    findUserById,
+    findUsersByUsername,
+    insertUser,
+    updateUserById,
+} from "../repositories/user.repository.js";
 import { hashPassword } from "./password.service.js";
 
 
-const getAllUsers = () => {
+const getUsers = () => {
     return findAllUsers();
 };
 
-const getUser = (id: number) => {
-    return findUser(id)
+const getUserById = (id: number) => {
+    return findUserById(id)
 }
 
-const create = async (username: string, password: string, dateOfBirth: Date) => {
+const createUser = async (username: string, password: string, dateOfBirth: Date) => {
     const hashedPassword = await hashPassword(password)
-    return createUser(username, hashedPassword, dateOfBirth)
+    return insertUser(username, hashedPassword, dateOfBirth)
 }
 
-const searchUser = (username: string) => {
-    return searchUserByUserName(username)
+const searchUsersByUsername = (username: string) => {
+    return findUsersByUsername(username)
 }
 
-const update = async (id: number, username: string, password: string, dateOfBirth: Date) => {
+const updateUser = async (id: number, username: string, password: string, dateOfBirth: Date) => {
     const hashedPassword = await hashPassword(password)
-    return updateUser(id, username, hashedPassword, dateOfBirth)
+    return updateUserById(id, username, hashedPassword, dateOfBirth)
 }
 
-const remove = (id: number) => {
-    return deleteById(id)
+const deleteUser = (id: number) => {
+    return deleteUserById(id)
 }
 
-
-// , create, getUserForEdit, edit, remove, searchUser
-export { getAllUsers, searchUser, findUser, getUser, create, remove, update };
+export { getUsers, searchUsersByUsername, getUserById, createUser, deleteUser, updateUser };

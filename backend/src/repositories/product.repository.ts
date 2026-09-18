@@ -1,6 +1,6 @@
 import prisma from "../config/db.js";
 
-const getAllProduct = async () => {
+const findAllProducts = async () => {
     const products = await prisma.product.findMany(
         {
             select: {
@@ -15,7 +15,7 @@ const getAllProduct = async () => {
     return products
 }
 
-const getProduct = async (keyword: string) => {
+const findProductByName = async (keyword: string) => {
     const product = await prisma.product.findFirst({
         select: {
             productId: true,
@@ -32,4 +32,4 @@ const getProduct = async (keyword: string) => {
     })
     return product
 }
-export { getAllProduct, getProduct }
+export { findAllProducts, findProductByName }

@@ -1,6 +1,6 @@
-import { getAllProduct } from "../repositories/product.repository.js"
+import { findAllProducts } from "../repositories/product.repository.js"
 
 const getProducts = async () => {
-    return await getAllProduct()
+    return await findAllProducts()
 }
 export { getProducts }
