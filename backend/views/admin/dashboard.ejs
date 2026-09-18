@@ -1,16 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
+<%- include("../partials/header", {
+    pageTitle: "Admin dashboard",
+    navLink: { href: "/", label: "Home" }
+}) %>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+<main class="container page-shell">
+    <div class="row g-4 align-items-start">
+        <div class="col-lg-3">
+            <%- include("../partials/sidebar", { activePage: "dashboard" }) %>
+        </div>
 
-<body>
-    Manage System
-    <button><a href="/users">User Management</a></button>
-    <button><a href="/roles">Role Management</a></button>
-</body>
+        <div class="col-lg-9">
+            <header class="page-heading">
+                <p class="eyebrow">Administration</p>
+                <h1 class="page-title">Manage the system</h1>
+                <p class="page-subtitle">Choose an area to view and maintain its records.</p>
+            </header>
 
-</html>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <a class="content-card content-card-body d-block h-100 text-decoration-none" href="/users">
+                        <h2 class="h5 text-dark">Users</h2>
+                        <p class="text-secondary mb-0">Create, search, edit, and remove user accounts.</p>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a class="content-card content-card-body d-block h-100 text-decoration-none" href="/roles">
+                        <h2 class="h5 text-dark">Roles</h2>
+                        <p class="text-secondary mb-0">Review and maintain application roles.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include("../partials/footer") %>

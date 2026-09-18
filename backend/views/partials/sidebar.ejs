@@ -1,0 +1,14 @@
+<aside class="admin-sidebar" aria-label="Admin navigation">
+    <p class="admin-sidebar-title">Management</p>
+    <nav class="admin-nav">
+        <a class="admin-nav-link <%= activePage === 'dashboard' ? 'active' : '' %>" href="/">
+            Overview
+        </a>
+        <a class="admin-nav-link <%= activePage === 'users' ? 'active' : '' %>" href="/users">
+            Users
+        </a>
+        <a class="admin-nav-link <%= activePage === 'roles' ? 'active' : '' %>" href="/roles">
+            Roles
+        </a>
+    </nav>
+</aside>

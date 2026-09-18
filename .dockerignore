@@ -1,10 +1,10 @@
 node_modules
-npm-debug.log
-.env
-.git
-.github
-.vscode
-.windsurf
-.claude
+npm - debug.log
+    .env
+    .git
+    .github
+    .vscode
+    .windsurf
+    .claude
 dist
 README.md

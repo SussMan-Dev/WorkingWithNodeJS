@@ -1,0 +1,25 @@
+<div class="row g-3">
+    <div class="col-md-7">
+        <label for="username" class="form-label">Username</label>
+        <input id="username" name="username" type="text" class="form-control"
+            placeholder="Enter a username" value="<%= usernameValue %>" autocomplete="username" required autofocus>
+    </div>
+
+    <div class="col-md-5">
+        <label for="dateOfBirth" class="form-label">Date of birth</label>
+        <input id="dateOfBirth" name="dateOfBirth" type="date" class="form-control"
+            value="<%= dateOfBirthValue %>" required>
+    </div>
+
+    <div class="col-md-6">
+        <label for="password" class="form-label"><%= passwordLabel %></label>
+        <input id="password" name="password" type="password" class="form-control"
+            placeholder="<%= passwordPlaceholder %>" autocomplete="new-password" required>
+    </div>
+
+    <div class="col-md-6">
+        <label for="confirmPassword" class="form-label"><%= confirmPasswordLabel %></label>
+        <input id="confirmPassword" name="confirmPassword" type="password" class="form-control"
+            placeholder="Enter the password again" autocomplete="new-password" required>
+    </div>
+</div>

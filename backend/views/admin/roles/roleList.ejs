@@ -1,14 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
+<%- include("../../partials/header", {
+    pageTitle: "Roles",
+    navLink: { href: "/", label: "Home" }
+}) %>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+<% const roleItems = typeof roles !== "undefined" ? roles : []; %>
 
-<body>
+<main class="container page-shell">
+    <div class="row g-4 align-items-start">
+        <div class="col-lg-3">
+            <%- include("../../partials/sidebar", { activePage: "roles" }) %>
+        </div>
 
-</body>
+        <div class="col-lg-9">
+            <header class="page-heading">
+                <p class="eyebrow">Access control</p>
+                <h1 class="page-title">Roles</h1>
+                <p class="page-subtitle">Review the roles available in the application.</p>
+            </header>
 
-</html>
+            <section class="content-card table-card">
+                <% if (roleItems.length > 0) { %>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Role</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% roleItems.forEach((role) => { %>
+                                    <tr>
+                                        <td><span class="id-badge">#<%= role.roleId %></span></td>
+                                        <td><strong><%= role.roleName %></strong></td>
+                                        <td><%= new Date(role.createdAt).toLocaleDateString("en-GB") %></td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <div class="empty-state">
+                        <strong>No roles found</strong>
+                        <span>Roles will appear here after they are created.</span>
+                    </div>
+                <% } %>
+            </section>
+        </div>
+    </div>
+</main>
+
+<%- include("../../partials/footer") %>

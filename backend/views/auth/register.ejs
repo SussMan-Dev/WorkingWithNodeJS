@@ -1,75 +1,36 @@
-<!doctype html>
-<html lang="en">
+<%- include("../partials/header", { pageTitle: "Create account", showNavbar: false }) %>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Create account | UserHub</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/index.css">
-</head>
-
-<body class="app-body">
-    <main class="auth-page">
-        <div class="auth-wrap">
-            <div class="auth-brand">
-                <a class="brand" href="/">
-                    <span class="brand-mark">U</span>
-                    <span>UserHub</span>
-                </a>
-            </div>
-
-            <section class="auth-card">
-                <h1 class="auth-title">Create an account</h1>
-                <p class="auth-subtitle">Add a few details to set up your profile.</p>
-
-                <% if (typeof error !=="undefined" && error) { %>
-                    <div class="alert alert-danger" role="alert">
-                        <%= error %>
-                    </div>
-                    <% } %>
-
-                        <form action="/auth/register" method="post" id="userForm">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input id="username" name="username" type="text" class="form-control"
-                                    placeholder="Choose a username"
-                                    value="<%= typeof username !== 'undefined' ? username : '' %>"
-                                    autocomplete="username" required autofocus>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="dateOfBirth" class="form-label">Date of birth</label>
-                                <input id="dateOfBirth" name="dateOfBirth" type="date" class="form-control"
-                                    value="<%= typeof dateOfBirth !== 'undefined' ? dateOfBirth : '' %>" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input id="password" name="password" type="password" class="form-control"
-                                    placeholder="Create a password" autocomplete="new-password" required>
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="confirmPassword" class="form-label">Confirm password</label>
-                                <input id="confirmPassword" name="confirmPassword" type="password" class="form-control"
-                                    placeholder="Enter your password again" autocomplete="new-password" required>
-                            </div>
-
-                            <button class="btn btn-primary w-100" type="submit">Create account</button>
-                        </form>
-
-                        <p class="auth-footer">
-                            Already have an account? <a href="/auth/login">Log in</a>
-                        </p>
-            </section>
+<main class="auth-page">
+    <div class="auth-wrap">
+        <div class="auth-brand">
+            <%- include("../partials/brand") %>
         </div>
-    </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
-</body>
+        <section class="auth-card">
+            <h1 class="auth-title">Create an account</h1>
+            <p class="auth-subtitle">Add a few details to set up your profile.</p>
 
-</html>
+            <%- include("../partials/alert", {
+                message: typeof error !== "undefined" ? error : null
+            }) %>
+
+            <form action="/auth/register" method="post">
+                <%- include("../partials/user-form-fields", {
+                    usernameValue: typeof username !== "undefined" ? username : "",
+                    dateOfBirthValue: typeof dateOfBirth !== "undefined" ? dateOfBirth : "",
+                    passwordLabel: "Password",
+                    passwordPlaceholder: "Create a password",
+                    confirmPasswordLabel: "Confirm password"
+                }) %>
+
+                <button class="btn btn-primary w-100 mt-4" type="submit">Create account</button>
+            </form>
+
+            <p class="auth-footer">
+                Already have an account? <a href="/auth/login">Log in</a>
+            </p>
+        </section>
+    </div>
+</main>
+
+<%- include("../partials/footer") %>
