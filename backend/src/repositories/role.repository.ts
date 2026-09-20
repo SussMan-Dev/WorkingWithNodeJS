@@ -52,4 +52,16 @@ const updateRoleById = async (id: number, newName: string) => {
 
     return result.count > 0;
 };
-export { findAllRoles, insertRole, findRolesByName, updateRoleById }
+
+const deleteRoleById = async (id: number) => {
+    if (!id) {
+        return false
+    }
+    const result = await prisma.role.delete({
+        where: {
+            roleId: id
+        }
+    })
+    return result
+}
+export { findAllRoles, insertRole, findRolesByName, updateRoleById, deleteRoleById }

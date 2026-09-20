@@ -17,8 +17,8 @@ const searchRolesByName = (keyword: string) => {
     return findRolesByName(keyword);
 };
 
-const updateRole = (id: number, newName: string) => {
-    return updateRoleById(id, newName);
+const updateRole = (id: number, newRoleName: string) => {
+    return updateRoleById(id, newRoleName);
 };
 
 export { getRoles, createRole, searchRolesByName, updateRole };
