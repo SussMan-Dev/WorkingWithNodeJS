@@ -23,7 +23,9 @@ const insertRole = async (name: string) => {
 const findRolesByName = async (keyword: string) => {
     const role = await prisma.role.findMany({
         select: {
-            roleName: true
+            roleId: true,
+            roleName: true,
+            createdAt: true,
         },
         where: {
             roleName: {

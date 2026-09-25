@@ -3,58 +3,54 @@ import { authenticateUser } from "../services/password.service.js";
 import { createUser } from "../services/user.service.js";
 import { isUniqueConstraintError } from "../utils/prisma-error.js";
 
-const renderRegisterForm = (_req: Request, res: Response) => {
-    res.status(200).render("auth/register")
-}
-const renderLoginForm = (_req: Request, res: Response) => {
-    res.status(200).render("auth/login")
-}
-
 const handleLogin = async (req: Request, res: Response) => {
+    const username = typeof req.body.username === "string" ? req.body.username.trim() : "";
+    const password = typeof req.body.password === "string" ? req.body.password : "";
 
-    const { username, password } = req.body
-    if (!username.trim() || !password) {
-        res.status(400).json("Please enter all required information")
-    }
-    const isValid = authenticateUser(username, password)
-    if (await isValid) {
-        res.redirect("/users")
-    }
-}
-
-const handleRegister = async (req: Request, res: Response) => {
-    const { username, dateOfBirth, password, confirmPassword } = req.body
-    const normalizedUsername = typeof username === "string" ? username.trim() : "";
-    const birthDate = new Date(dateOfBirth)
-    if (!normalizedUsername || !dateOfBirth || Number.isNaN(birthDate.getTime()) || !password || !confirmPassword) {
-        return res.status(400).render("auth/register", {
-            error: "Must enter valid information in all required fields",
-            username: normalizedUsername,
-            dateOfBirth,
-        })
-    }
-    if (password !== confirmPassword) {
-        return res.status(400).render("auth/register", {
-            error: "Password and confirm password must be the same",
-            username: normalizedUsername,
-            dateOfBirth,
-        })
+    if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
     }
 
     try {
-        await createUser(normalizedUsername, password, birthDate)
-        return res.redirect("/auth/login")
-    } catch (error) {
-        if (isUniqueConstraintError(error)) {
-            return res.status(409).render("auth/register", {
-                error: "Username already exists",
-                username: normalizedUsername,
-                dateOfBirth,
-            });
+        const isValid = await authenticateUser(username, password);
+
+        if (!isValid) {
+            return res.status(401).json({ message: "Invalid username or password" });
         }
 
-        console.error("Register failed:", error)
-        return res.status(500).json("Unable to create user")
+        return res.status(200).json({ message: "Login successful" });
+    } catch (error) {
+        console.error("Login failed:", error);
+        return res.status(500).json({ message: "Unable to log in" });
     }
-}
-export { renderRegisterForm, renderLoginForm, handleLogin, handleRegister }
+};
+
+const handleRegister = async (req: Request, res: Response) => {
+    const { username, dateOfBirth, password, confirmPassword } = req.body;
+    const normalizedUsername = typeof username === "string" ? username.trim() : "";
+    const normalizedPassword = typeof password === "string" ? password : "";
+    const normalizedConfirmation = typeof confirmPassword === "string" ? confirmPassword : "";
+    const birthDate = new Date(dateOfBirth);
+
+    if (!normalizedUsername || !dateOfBirth || Number.isNaN(birthDate.getTime()) || !normalizedPassword || !normalizedConfirmation) {
+        return res.status(400).json({ message: "Enter valid information in all required fields" });
+    }
+
+    if (normalizedPassword !== normalizedConfirmation) {
+        return res.status(400).json({ message: "Password and confirmation must match" });
+    }
+
+    try {
+        await createUser(normalizedUsername, normalizedPassword, birthDate);
+        return res.status(201).json({ message: "Account created successfully" });
+    } catch (error) {
+        if (isUniqueConstraintError(error)) {
+            return res.status(409).json({ message: "Username already exists" });
+        }
+
+        console.error("Register failed:", error);
+        return res.status(500).json({ message: "Unable to create account" });
+    }
+};
+
+export { handleLogin, handleRegister };

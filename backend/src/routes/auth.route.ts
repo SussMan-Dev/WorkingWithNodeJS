@@ -1,10 +1,9 @@
 import type { Express } from "express";
-import { renderLoginForm, renderRegisterForm, handleLogin, handleRegister } from "../controllers/auth.controller.js";
-const registerAuthRoute = (app: Express): void => {
-    app.get("/auth/register", renderRegisterForm)
-    app.get("/auth/login", renderLoginForm)
+import { handleLogin, handleRegister } from "../controllers/auth.controller.js";
 
-    app.post("/auth/register", handleRegister)
-    app.post("/auth/login", handleLogin)
-}
-export { registerAuthRoute }
+const registerAuthRoute = (app: Express): void => {
+    app.post("/api/v1/auth/register", handleRegister);
+    app.post("/api/v1/auth/login", handleLogin);
+};
+
+export { registerAuthRoute };

@@ -1,11 +1,11 @@
 import type { Express } from "express";
-import { handleCreateRole, handleDeleteRole, handleGetRole, handleUpdateRole, renderRoleList } from "../controllers/role.controller.js";
-const registerRoleRoute = async (app: Express) => {
-    app.get("/roles", renderRoleList)
+import { handleCreateRole, handleDeleteRole, handleGetRoles, handleUpdateRole } from "../controllers/role.controller.js";
 
-    app.get("/api/v1/role", handleGetRole)
-    app.post("api/v1/role", handleCreateRole)
-    app.patch("api/v1/role", handleUpdateRole)
-    app.delete("/api/v1/role/:id", handleDeleteRole);
-}
-export { registerRoleRoute }
+const registerRoleRoute = (app: Express): void => {
+    app.get("/api/v1/roles", handleGetRoles);
+    app.post("/api/v1/roles", handleCreateRole);
+    app.patch("/api/v1/roles/:id", handleUpdateRole);
+    app.delete("/api/v1/roles/:id", handleDeleteRole);
+};
+
+export { registerRoleRoute };

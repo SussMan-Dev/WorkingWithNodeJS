@@ -1,7 +1,8 @@
 import type { Express } from "express";
-import { renderProductList } from "../controllers/product.controller.js";
-const registerProductRoute = (app: Express): void => {
+import { handleGetProducts } from "../controllers/product.controller.js";
 
-    app.get("/product", renderProductList)
-}
-export { registerProductRoute }
+const registerProductRoute = (app: Express): void => {
+    app.get("/api/v1/products", handleGetProducts);
+};
+
+export { registerProductRoute };

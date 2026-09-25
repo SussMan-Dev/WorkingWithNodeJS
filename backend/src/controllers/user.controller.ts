@@ -9,165 +9,131 @@ import {
 } from "../services/user.service.js";
 import { isUniqueConstraintError } from "../utils/prisma-error.js";
 
-//Render UI
-const renderUserList = async (req: Request, res: Response): Promise<void> => {
-    const keyword = req.query.keyword as string;
-    try {
-        const users = keyword ? await searchUsersByUsername(keyword) : await getUsers();
-        res.render("admin/user/userList", {
-            users,
-            keyword,
-        });
+const parseId = (value: unknown): number | null => {
+    if (typeof value !== "string") {
+        return null;
     }
-    catch (error) {
-        console.error("Unable to render user list:", error);
-        res.status(500).send("Internal Server Error");
+
+    const id = Number(value);
+    return Number.isInteger(id) && id > 0 ? id : null;
+};
+
+const handleGetUsers = async (req: Request, res: Response) => {
+    try {
+        const keyword = typeof req.query.keyword === "string" ? req.query.keyword.trim() : "";
+        const users = keyword ? await searchUsersByUsername(keyword) : await getUsers();
+        return res.status(200).json({ data: users });
+    } catch (error) {
+        console.error("Unable to get users:", error);
+        return res.status(500).json({ message: "Unable to get users" });
     }
 };
 
-const renderCreateUserForm = (_req: Request, res: Response) => {
-    try {
-        res.status(200).render("admin/user/create")
-    }
-    catch {
-        res.status(500).json("Internal Server Error")
-    }
-}
-
-const renderEditUserForm = async (req: Request, res: Response) => {
-    try {
-        const id = Number(req.params.id)
-        const user = await getUserById(id)
-        res.status(200).render("admin/user/edit", { user })
-    }
-    catch {
-        res.status(500).json("Internal Server Error")
-    }
-}
-
-// Logic
-const handleGetUsers = async (_req: Request, res: Response) => {
-    try {
-        const users = await getUsers()
-        res.status(200).send(users)
-    }
-    catch {
-        res.status(500).json("Internal Server Error")
-    }
-
-}
-
 const handleGetUser = async (req: Request, res: Response) => {
-    try {
-        const id = Number(req.params.id)
-        const user = await getUserById(id)
-        res.status(200).send(user)
-    }
-    catch {
-        res.status(500).json("Internal Server Error")
+    const id = parseId(req.params.id);
+
+    if (!id) {
+        return res.status(400).json({ message: "Invalid user id" });
     }
 
-}
+    try {
+        const user = await getUserById(id);
+        return res.status(200).json({ data: user });
+    } catch (error) {
+        console.error(`Unable to get user ${id}:`, error);
+        return res.status(404).json({ message: "User not found" });
+    }
+};
 
 const handleCreateUser = async (req: Request, res: Response) => {
-
     const { username, password, dateOfBirth, confirmPassword } = req.body;
+    const normalizedUsername = typeof username === "string" ? username.trim() : "";
+    const normalizedPassword = typeof password === "string" ? password : "";
+    const normalizedConfirmation = typeof confirmPassword === "string" ? confirmPassword : "";
     const birthDate = new Date(dateOfBirth);
-    if (!username || !dateOfBirth || !password || !confirmPassword) {
-        return res.status(400).render("admin/user/create", {
-            error: "Please enter all required information",
-            username,
-            password,
-            dateOfBirth,
-            confirmPassword
-        });
+
+    if (!normalizedUsername || !dateOfBirth || !normalizedPassword || !normalizedConfirmation) {
+        return res.status(400).json({ message: "Enter all required information" });
     }
+
     if (Number.isNaN(birthDate.getTime())) {
-        return res.status(400).render("admin/user/create", {
-            error: "Your birthday is invalid",
-            username,
-        });
+        return res.status(400).json({ message: "Date of birth is invalid" });
     }
 
-
-    if (password !== confirmPassword) {
-        return res.status(400).render("admin/user/create", {
-            error: "Password and confirm password must be same",
-            username,
-        });
+    if (normalizedPassword !== normalizedConfirmation) {
+        return res.status(400).json({ message: "Password and confirmation must match" });
     }
+
     try {
-        await createUser(username.trim(), password, birthDate);
-        return res.redirect("/users");
+        await createUser(normalizedUsername, normalizedPassword, birthDate);
+        return res.status(201).json({ message: "User created successfully" });
     } catch (error) {
         if (isUniqueConstraintError(error)) {
-            return res.status(409).render("admin/user/create", {
-                error: "Username already exists",
-                username,
-                dateOfBirth,
-            });
+            return res.status(409).json({ message: "Username already exists" });
         }
 
-        return res.status(500).render("admin/user/create", {
-            error: "Unable to create user",
-            username,
-        });
+        console.error("Unable to create user:", error);
+        return res.status(500).json({ message: "Unable to create user" });
     }
 };
 
 const handleDeleteUser = async (req: Request, res: Response) => {
+    const id = parseId(req.params.id);
+
+    if (!id) {
+        return res.status(400).json({ message: "Invalid user id" });
+    }
+
     try {
-        const id = Number(req.params.id);
-
         await deleteUser(id);
-
         return res.status(204).send();
-    } catch (err) {
-        return res.status(500).json({
-            error: "Unable to delete user. Please try again.",
-        });
+    } catch (error) {
+        console.error(`Unable to delete user ${id}:`, error);
+        return res.status(500).json({ message: "Unable to delete user" });
     }
 };
 
 const handleUpdateUser = async (req: Request, res: Response) => {
-    const { username, dateOfBirth, password, confirmPassword } = req.body
-    if (!username.trim() || !dateOfBirth || !password || !confirmPassword) {
-        return res.status(400).json({
-            error: "Please enter all required information"
-        });
+    const id = parseId(req.params.id);
+    const { username, dateOfBirth, password, confirmPassword } = req.body;
+    const normalizedUsername = typeof username === "string" ? username.trim() : "";
+    const normalizedPassword = typeof password === "string" ? password : "";
+    const normalizedConfirmation = typeof confirmPassword === "string" ? confirmPassword : "";
+    const birthDate = new Date(dateOfBirth);
+
+    if (!id) {
+        return res.status(400).json({ message: "Invalid user id" });
     }
-    if (password !== confirmPassword) {
-        return res.status(400).json({
-            error: "Password and confirm password must be the same"
-        });
+
+    if (!normalizedUsername || !dateOfBirth || !normalizedPassword || !normalizedConfirmation) {
+        return res.status(400).json({ message: "Enter all required information" });
     }
+
+    if (Number.isNaN(birthDate.getTime())) {
+        return res.status(400).json({ message: "Date of birth is invalid" });
+    }
+
+    if (normalizedPassword !== normalizedConfirmation) {
+        return res.status(400).json({ message: "Password and confirmation must match" });
+    }
+
     try {
-        const birthDate = new Date(dateOfBirth);
-        const id = Number(req.params.id)
-        await updateUser(id, username, password, birthDate)
-        return res.status(200).json({
-            error: "User updated successfully"
-        });
-    }
-    catch (error) {
+        await updateUser(id, normalizedUsername, normalizedPassword, birthDate);
+        return res.status(200).json({ message: "User updated successfully" });
+    } catch (error) {
         if (isUniqueConstraintError(error)) {
-            return res.status(409).json({
-                error: "Username already exists"
-            });
+            return res.status(409).json({ message: "Username already exists" });
         }
 
-        return res.status(500).json({
-            error: "Internal Server Error"
-        });
+        console.error(`Unable to update user ${id}:`, error);
+        return res.status(500).json({ message: "Unable to update user" });
     }
-}
+};
+
 export {
-    renderUserList,
-    renderCreateUserForm,
     handleGetUsers,
     handleGetUser,
     handleCreateUser,
-    renderEditUserForm,
     handleDeleteUser,
     handleUpdateUser,
-}
+};
