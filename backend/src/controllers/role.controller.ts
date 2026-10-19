@@ -1,5 +1,5 @@
 import { type Request, type Response } from "express";
-import { createRole, getRoles, searchRolesByName, updateRole } from "../services/role.service.js";
+import { createRole, getRoles, searchRolesByName, setRole, updateRole } from "../services/role.service.js";
 import { deleteRoleById } from "../repositories/role.repository.js";
 import { isUniqueConstraintError } from "../utils/prisma-error.js";
 
@@ -91,4 +91,16 @@ const handleDeleteRole = async (req: Request, res: Response) => {
     }
 };
 
-export { handleCreateRole, handleGetRoles, handleUpdateRole, handleDeleteRole };
+const handleSetRole = async (req: Request, res: Response) => {
+    const userId = Number(req.params.userId);
+    const roleId = Number(req.params.roleId);
+    try{
+        await setRole(userId, roleId)
+        return res.status(200).send()
+    }
+    catch{
+        return res.status(500).json("Unable to set role")
+    }
+}
+
+export { handleCreateRole, handleGetRoles, handleUpdateRole, handleDeleteRole, handleSetRole };

@@ -9,7 +9,9 @@ const hashPassword = async (plainPassword: string): Promise<string> => {
         parallelism: 4,
     })
 }
+
 const authenticateUser = async (username: string, password: string): Promise<boolean> => {
     return await verifyUserCredentials(username, password)
 }
+
 export { hashPassword, authenticateUser }

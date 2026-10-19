@@ -2,6 +2,7 @@ import {
     findAllRoles,
     findRolesByName,
     insertRole,
+    setRoleById,
     updateRoleById,
 } from "../repositories/role.repository.js";
 
@@ -21,4 +22,7 @@ const updateRole = (id: number, newRoleName: string) => {
     return updateRoleById(id, newRoleName);
 };
 
-export { getRoles, createRole, searchRolesByName, updateRole };
+const setRole = (userId: number, roleId : number)=>{
+    return setRoleById(userId, roleId)
+}
+export { getRoles, createRole, searchRolesByName, updateRole, setRole };

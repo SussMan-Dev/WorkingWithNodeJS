@@ -14,4 +14,5 @@ const verifyUserCredentials = async (usernameInput: string, passwordInput: strin
 
     return await argon2.verify(user.password, passwordInput);
 };
+
 export { verifyUserCredentials }

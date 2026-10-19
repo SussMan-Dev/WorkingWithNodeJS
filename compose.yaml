@@ -1,0 +1,52 @@
+services:
+  db:
+    image: mysql:8.4
+    container_name: userhub-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: userhub
+      MYSQL_USER: userhub
+      MYSQL_PASSWORD: userhub_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot_password"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  migrate:
+    build:
+      context: .
+      target: backend-build
+    command: npx prisma migrate deploy
+    environment:
+      DATABASE_URL: mysql://userhub:userhub_password@db:3306/userhub
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  app:
+    build:
+      context: .
+    container_name: userhub-app
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: userhub
+      DB_PASSWORD: userhub_password
+      DB_DATABASE: userhub
+    ports:
+      - "3000:3000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  mysql_data:

@@ -1,4 +1,5 @@
 import prisma from "../config/db.js";
+import { findUserById } from "./user.repository.js";
 
 const findAllRoles = async () => {
     const roles = await prisma.role.findMany({
@@ -36,6 +37,20 @@ const findRolesByName = async (keyword: string) => {
     return role
 }
 
+const findRolesById = async (roleId: number) => {
+    const role = await prisma.role.findMany({
+        select: {
+            roleId: true,
+            roleName: true,
+            createdAt: true,
+        },
+        where: {
+            roleId: roleId
+        },
+    });
+    return role
+}
+
 const updateRoleById = async (id: number, newName: string) => {
     const roleName = newName.trim();
 
@@ -66,4 +81,23 @@ const deleteRoleById = async (id: number) => {
     })
     return result
 }
-export { findAllRoles, insertRole, findRolesByName, updateRoleById, deleteRoleById }
+
+const setRoleById = async(userId: number, roleId: number) => {
+    const isRoleExist = await findRolesById(roleId)
+    const isUserExist = await findUserById(userId)
+    if(!isRoleExist || !isUserExist){
+        return false
+    }
+    const result = await prisma.user.update({
+        where: {
+            userId : userId
+        },
+        data: {
+            userId: userId,
+            roleId : roleId
+        }
+    })
+    return result
+}
+
+export { findAllRoles, insertRole, findRolesByName, updateRoleById, deleteRoleById, setRoleById }
